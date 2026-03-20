@@ -1,0 +1,10 @@
+export type TagTone =
+  | 'neutral'
+  | 'purple'
+  | 'about'
+  | 'green'
+  | 'pink'
+  | 'beige'
+  | 'blue'
+  | 'skills'
+  | 'resume'

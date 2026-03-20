@@ -1,0 +1,119 @@
+@import "tailwindcss";
+
+/* App baseline */
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #f8f9fb;
+  color: #0f172a;
+}
+
+/* Desktop: lock to non-scrolling 100vh layout. Mobile/tablet can scroll. */
+@media (min-width: 1024px) {
+  html,
+  body {
+    overflow: hidden;
+  }
+}
+
+/* View Transitions (native) */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 360ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Entire layout slide: Home <-> Projects */
+/* Home -> Projects: projects shell slides up from bottom */
+::view-transition-old(home-shell) {
+  animation-duration: 320ms;
+  animation-name: vt-slide-up-out;
+  animation-timing-function: cubic-bezier(0.4, 0, 1, 1);
+}
+::view-transition-new(projects-shell) {
+  animation-duration: 360ms;
+  animation-name: vt-slide-up-in;
+  animation-timing-function: cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+
+/* Projects -> Home: projects shell slides down, home shell slides down in */
+::view-transition-old(projects-shell) {
+  animation-duration: 320ms;
+  animation-name: vt-slide-down-out;
+  animation-timing-function: cubic-bezier(0.4, 0, 1, 1);
+}
+::view-transition-new(home-shell) {
+  animation-duration: 360ms;
+  animation-name: vt-slide-down-in;
+  animation-timing-function: cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+
+@keyframes vt-slide-up-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-18px);
+  }
+}
+@keyframes vt-slide-up-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes vt-slide-down-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+@keyframes vt-slide-down-in {
+  from {
+    opacity: 0;
+    transform: translateY(-18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Simple clamps to prevent overflow (no plugin needed). */
+.clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.clamp-4 {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
