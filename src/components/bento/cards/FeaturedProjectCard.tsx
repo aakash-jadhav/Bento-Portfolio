@@ -1,3 +1,4 @@
+import { usePortfolioForCard } from '../../../contexts/AdminPreviewPortfolioContext'
 import { BentoCard } from '../BentoCard'
 import { Icon } from '../Icon'
 import { cx } from '../utils'
@@ -16,21 +17,18 @@ export function FeaturedProjectCard({
   project = 'eco',
 }: FeaturedProjectCardProps) {
   const isSecure = project === 'secure'
+  const p = usePortfolioForCard()
+  const f = isSecure ? p.featuredSecure : p.featuredEco
 
   const linkIconStroke = isSecure ? 'stroke-amber-900' : 'stroke-orange-800'
-  const linkText = isSecure ? 'text-amber-900 hover:text-amber-950' : 'text-orange-900 hover:text-orange-950'
-
-  const title = project === 'eco' ? 'Eco-Track Dashboard' : 'SecurePay API'
-  const description =
-    project === 'eco'
-      ? 'SaaS platform tracking carbon footprints. Built with Next.js and D3.js.'
-      : 'High-throughput payment gateway processing 10k+ req/sec. Node.js & Redis.'
-  const headerLabel = project === 'eco' ? 'Featured Project' : 'Project 02'
+  const linkText = isSecure
+    ? 'text-amber-900 hover:text-amber-950'
+    : 'text-orange-900 hover:text-orange-950'
 
   return (
     <BentoCard
       tone="beige"
-      title={headerLabel}
+      title={f.headerLabel}
       headerVariant="split"
       headerLabelClassName={cx(
         'text-xs tracking-[0.2em]',
@@ -54,10 +52,10 @@ export function FeaturedProjectCard({
     >
       <div className={cx(variant === 'home' && 'flex min-h-0 flex-1 flex-col')}>
         <div className="text-base font-semibold tracking-tight text-slate-900">
-          {title}
+          {f.title}
         </div>
         <div className="clamp-2 mt-1 text-xs text-slate-700/70">
-          {description}
+          {f.description}
         </div>
 
         <div
@@ -73,7 +71,7 @@ export function FeaturedProjectCard({
             )}
           >
             <a
-              href="https://github.com"
+              href={f.codeUrl}
               target="_blank"
               rel="noreferrer noopener"
               className="cursor-pointer inline-flex items-center gap-1.5"
@@ -82,7 +80,7 @@ export function FeaturedProjectCard({
               CODE
             </a>
             <a
-              href="https://example.com"
+              href={f.demoUrl}
               target="_blank"
               rel="noreferrer noopener"
               className="cursor-pointer inline-flex items-center gap-1.5"

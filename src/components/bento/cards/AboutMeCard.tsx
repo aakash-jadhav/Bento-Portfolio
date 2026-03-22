@@ -1,3 +1,4 @@
+import { usePortfolioForCard } from '../../../contexts/AdminPreviewPortfolioContext'
 import { BentoCard } from '../BentoCard'
 import { Icon } from '../Icon'
 import { cx } from '../utils'
@@ -7,6 +8,8 @@ type AboutMeCardProps = {
 }
 
 export function AboutMeCard({ className }: AboutMeCardProps) {
+  const a = usePortfolioForCard().about
+
   return (
     <BentoCard
       tone="about"
@@ -24,10 +27,10 @@ export function AboutMeCard({ className }: AboutMeCardProps) {
       className={cx('min-h-0 border-indigo-300/25', className)}
     >
       <div className="text-xl font-bold leading-snug tracking-tight text-[#1F2937]">
-        Alex Rivers
+        {a.name}
       </div>
       <div className="mt-1 text-[11px] font-medium leading-snug text-[#4B5563]">
-        Full Stack Developer
+        {a.title}
       </div>
 
       <div className="mt-4 grid gap-2 text-[11px] leading-snug text-[#4B5563]">
@@ -38,7 +41,7 @@ export function AboutMeCard({ className }: AboutMeCardProps) {
               className="h-3.5 w-3.5 shrink-0"
               pathClassName="stroke-[#4B5563]"
             />
-            <span className="truncate">hello@arivers.dev</span>
+            <span className="truncate">{a.email}</span>
           </span>
           <span className="inline-flex min-w-0 items-center gap-2.5 justify-self-start">
             <Icon
@@ -46,7 +49,7 @@ export function AboutMeCard({ className }: AboutMeCardProps) {
               className="h-3.5 w-3.5 shrink-0"
               pathClassName="stroke-[#4B5563]"
             />
-            <span className="truncate">+1 (555) 123-4567</span>
+            <span className="truncate">{a.phone}</span>
           </span>
         </div>
         <div className="grid grid-cols-2 items-center gap-4">
@@ -56,7 +59,7 @@ export function AboutMeCard({ className }: AboutMeCardProps) {
               className="h-3.5 w-3.5 shrink-0"
               pathClassName="stroke-[#4B5563]"
             />
-            <span className="truncate">San Francisco, CA</span>
+            <span className="truncate">{a.location}</span>
           </span>
           <button
             type="button"

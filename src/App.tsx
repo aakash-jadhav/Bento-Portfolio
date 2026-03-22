@@ -1,56 +1,37 @@
-import { useState } from 'react'
-import type { CSSProperties } from 'react'
-import { HomeBentoGrid } from './components/bento/HomeBentoGrid'
-import { ProjectsPageFull } from './components/bento/ProjectsPageFull'
-import { cx } from './components/bento/utils'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { AuthProvider } from './contexts/AuthContext'
+import { SiteContentProvider } from './contexts/SiteContentContext'
+import { ProtectedRoute } from './components/ProtectedRoute'
+import { PortfolioApp } from './PortfolioApp'
+import { LoginPage } from './pages/LoginPage'
+import { AdminPage } from './pages/AdminPage'
 
-function withViewTransition(update: () => void) {
-  const doc = document as Document & {
-    startViewTransition?: (cb: () => void) => unknown
-  }
-  if (!doc.startViewTransition) {
-    update()
-    return
-  }
-  doc.startViewTransition(() => update())
-}
-
-function App() {
-  const [showProjects, setShowProjects] = useState(false)
-
-  const goProjects = () => withViewTransition(() => setShowProjects(true))
-  const goHome = () => withViewTransition(() => setShowProjects(false))
-
+function AppRoutes() {
   return (
-    <main className="bg-[#F8F9FB]">
-      <div
-        className={cx(
-          'mx-auto w-full max-w-[1320px]',
-          'p-4 sm:p-5 lg:p-6',
-          'min-h-screen lg:h-dvh lg:min-h-0',
-          'overflow-auto lg:overflow-hidden',
-        )}
-      >
-        {showProjects ? (
-          <section
-            className="flex h-full min-h-0 flex-col overflow-auto"
-            style={{ viewTransitionName: 'projects-shell' } as CSSProperties}
-          >
-            <ProjectsPageFull onBack={goHome} />
-          </section>
-        ) : (
-          <section
-            className="flex h-full min-h-0 flex-col"
-            style={{ viewTransitionName: 'home-shell' } as CSSProperties}
-          >
-            <div className="min-h-0 flex-1">
-              <HomeBentoGrid onGoProjects={goProjects} />
-            </div>
-          </section>
-        )}
-      </div>
-    </main>
+    <Routes>
+      <Route path="/" element={<PortfolioApp />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute>
+            <AdminPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   )
 }
 
-export default App
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <SiteContentProvider>
+          <AppRoutes />
+        </SiteContentProvider>
+      </AuthProvider>
+    </BrowserRouter>
+  )
+}

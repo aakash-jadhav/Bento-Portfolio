@@ -1,3 +1,4 @@
+import { usePortfolioForCard } from '../../../contexts/AdminPreviewPortfolioContext'
 import { BentoCard } from '../BentoCard'
 import { Icon } from '../Icon'
 import { cx } from '../utils'
@@ -7,6 +8,8 @@ type SummaryObjectiveCardProps = {
 }
 
 export function SummaryObjectiveCard({ className }: SummaryObjectiveCardProps) {
+  const s = usePortfolioForCard().summary
+
   return (
     <BentoCard
       tone="green"
@@ -26,12 +29,10 @@ export function SummaryObjectiveCard({ className }: SummaryObjectiveCardProps) {
       className={cx('min-h-0 border-emerald-200/45', className)}
     >
       <div className="text-lg font-bold leading-snug tracking-tight text-[#1F2937]">
-        Driven Full Stack Architect
+        {s.headline}
       </div>
       <p className="clamp-4 mt-2.5 text-xs font-normal leading-[1.45] text-slate-600">
-        Passionate about building scalable web applications and leading high-performance
-        engineering teams. I specialize in bridging the gap between complex backend systems
-        and intuitive, modern user experiences.
+        {s.body}
       </p>
     </BentoCard>
   )
