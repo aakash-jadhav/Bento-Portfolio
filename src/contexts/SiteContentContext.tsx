@@ -2,12 +2,12 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react'
 import {
   DEFAULT_SITE_CONTENT,
-  SITE_CONTENT_STORAGE_KEY,
 } from '../data/siteContentDefaults'
 import type {
   PortfolioContent,
@@ -15,23 +15,16 @@ import type {
   SiteContent,
 } from '../data/siteContentTypes'
 
-function loadStored(): SiteContent | null {
+async function loadFromFile(): Promise<SiteContent | null> {
   try {
-    const raw = localStorage.getItem(SITE_CONTENT_STORAGE_KEY)
-    if (!raw) return null
-    const parsed = JSON.parse(raw) as SiteContent
+    // `public/` assets are served at the site root.
+    const res = await fetch('/siteContent.json', { cache: 'no-store' })
+    if (!res.ok) return null
+    const parsed = (await res.json()) as SiteContent
     if (!parsed?.portfolio || !Array.isArray(parsed.projects)) return null
     return parsed
   } catch {
     return null
-  }
-}
-
-function persist(content: SiteContent) {
-  try {
-    localStorage.setItem(SITE_CONTENT_STORAGE_KEY, JSON.stringify(content))
-  } catch {
-    // ignore quota / private mode
   }
 }
 
@@ -46,14 +39,23 @@ const SiteContentContext = createContext<SiteContentContextValue | null>(null)
 
 export function SiteContentProvider({ children }: { children: React.ReactNode }) {
   const [siteContent, setSiteContent] = useState<SiteContent>(() => {
-    const stored = loadStored()
-    return stored ?? DEFAULT_SITE_CONTENT
+    return DEFAULT_SITE_CONTENT
   })
+
+  useEffect(() => {
+    let cancelled = false
+    loadFromFile().then((loaded) => {
+      if (cancelled) return
+      if (loaded) setSiteContent(loaded)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const setPortfolio = useCallback((next: PortfolioContent) => {
     setSiteContent((prev) => {
       const merged: SiteContent = { ...prev, portfolio: next }
-      persist(merged)
       return merged
     })
   }, [])
@@ -61,15 +63,12 @@ export function SiteContentProvider({ children }: { children: React.ReactNode })
   const setProjects = useCallback((next: ProjectEditorEntry[]) => {
     setSiteContent((prev) => {
       const merged: SiteContent = { ...prev, projects: next }
-      persist(merged)
       return merged
     })
   }, [])
 
   const resetSiteContent = useCallback(() => {
-    const next = structuredClone(DEFAULT_SITE_CONTENT)
-    persist(next)
-    setSiteContent(next)
+    setSiteContent(structuredClone(DEFAULT_SITE_CONTENT))
   }, [])
 
   const value = useMemo(

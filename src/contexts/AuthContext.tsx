@@ -29,7 +29,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const trimmedEmail = email.trim()
     const trimmedPassword = password.trim()
     if (!trimmedEmail || !trimmedPassword) return false
-    // Demo: any non-empty email + password grants access
+
+    // Client-side credential check using Vite env vars (VITE_* are exposed to the browser).
+    const expectedEmail = (import.meta.env.VITE_ADMIN_EMAIL ?? '').toString()
+    const expectedPassword = (import.meta.env.VITE_ADMIN_PASSWORD ?? '').toString()
+    if (!expectedEmail || !expectedPassword) return false
+
+    const ok =
+      trimmedEmail === expectedEmail && trimmedPassword === expectedPassword
+    if (!ok) return false
+
     writeSession()
     setIsAuthenticated(true)
     return true

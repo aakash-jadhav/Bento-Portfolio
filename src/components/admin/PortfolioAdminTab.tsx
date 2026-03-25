@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { AdminPreviewPortfolioProvider } from '../../contexts/AdminPreviewPortfolioContext'
 import { useSiteContent } from '../../contexts/SiteContentContext'
 import type { PortfolioContent, PortfolioSectionId } from '../../data/siteContentTypes'
@@ -16,12 +16,31 @@ function clonePortfolio(p: PortfolioContent): PortfolioContent {
   return structuredClone(p)
 }
 
+function downloadJson(filename: string, data: unknown) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], {
+    type: 'application/json',
+  })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  URL.revokeObjectURL(url)
+}
+
 export function PortfolioAdminTab() {
   const { siteContent, setPortfolio } = useSiteContent()
   const [sectionId, setSectionId] = useState<PortfolioSectionId>('about')
   const [draft, setDraft] = useState<PortfolioContent>(() =>
     clonePortfolio(siteContent.portfolio),
   )
+
+  // Ensure admin UI reflects the latest `public/siteContent.json` after fetch.
+  useEffect(() => {
+    setDraft(clonePortfolio(siteContent.portfolio))
+  }, [siteContent.portfolio])
 
   const meta = useMemo(
     () => PORTFOLIO_SECTIONS.find((s) => s.id === sectionId),
@@ -35,6 +54,14 @@ export function PortfolioAdminTab() {
   const save = useCallback(() => {
     setPortfolio(clonePortfolio(draft))
   }, [draft, setPortfolio])
+
+  const exportJson = useCallback(() => {
+    const exportData = {
+      ...siteContent,
+      portfolio: draft,
+    }
+    downloadJson('siteContent.json', exportData)
+  }, [draft, siteContent])
 
   return (
     <div
@@ -100,6 +127,14 @@ export function PortfolioAdminTab() {
               className="cursor-pointer rounded-xl border border-slate-200/90 bg-[#f1f5f9] px-5 py-2.5 text-sm font-semibold text-[#334155] transition hover:bg-[#e2e8f0]"
             >
               Cancel
+            </button>
+            <button
+              type="button"
+              onClick={exportJson}
+              className="cursor-pointer rounded-xl border border-slate-200/90 bg-white px-5 py-2.5 text-sm font-semibold text-[#334155] transition hover:bg-slate-50"
+              title="Download siteContent.json, replace public/siteContent.json, then redeploy."
+            >
+              Export JSON
             </button>
           </div>
         </div>
