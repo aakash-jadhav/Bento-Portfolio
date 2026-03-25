@@ -2,6 +2,7 @@ import { usePortfolioForCard } from '../../../contexts/AdminPreviewPortfolioCont
 import { BentoCard } from '../BentoCard'
 import { Icon } from '../Icon'
 import { cx } from '../utils'
+import { downloadResumePdf } from '../../../resumeStorage'
 
 type AboutMeCardProps = {
   className?: string
@@ -64,6 +65,11 @@ export function AboutMeCard({ className }: AboutMeCardProps) {
           <button
             type="button"
             className="cursor-pointer inline-flex items-center gap-1.5 justify-self-start font-semibold text-[#6366F1] hover:text-[#4F46E5]"
+            onClick={() => {
+              downloadResumePdf().catch(() => {
+                // If no resume exists, do nothing.
+              })
+            }}
           >
             <Icon
               name="download"

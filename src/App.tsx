@@ -1,4 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { MantineProvider } from '@mantine/core'
 import { AuthProvider } from './contexts/AuthContext'
 import { SiteContentProvider } from './contexts/SiteContentContext'
 import { ProtectedRoute } from './components/ProtectedRoute'
@@ -27,11 +28,13 @@ function AppRoutes() {
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <SiteContentProvider>
-          <AppRoutes />
-        </SiteContentProvider>
-      </AuthProvider>
+      <MantineProvider>
+        <AuthProvider>
+          <SiteContentProvider>
+            <AppRoutes />
+          </SiteContentProvider>
+        </AuthProvider>
+      </MantineProvider>
     </BrowserRouter>
   )
 }

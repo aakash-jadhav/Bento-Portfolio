@@ -1,6 +1,7 @@
 import type { Dispatch, SetStateAction } from 'react'
 import type { PortfolioContent, PortfolioSectionId } from '../../data/siteContentTypes'
 import { adminInputClass } from './adminTheme'
+import { TagsInput } from '@mantine/core'
 
 function Field({
   label,
@@ -176,19 +177,24 @@ export function PortfolioSectionForm({
                 />
               </Field>
               <div className="mt-3">
-                <Field label="Tags (comma-separated)">
-                  <input
-                    className={inputClass}
-                    value={g.tags.join(', ')}
-                    onChange={(e) => {
-                      const tags = e.target.value
-                        .split(',')
-                        .map((t) => t.trim())
-                        .filter(Boolean)
+                <Field label="Tags">
+                  <TagsInput
+                    value={g.tags}
+                    onChange={(nextTags) => {
                       const next = sk.groups.map((row, i) =>
-                        i === gi ? { ...row, tags } : row,
+                        i === gi ? { ...row, tags: nextTags } : row,
                       )
                       patch({ skills: { groups: next } })
+                    }}
+                    placeholder="Add a tag and press Enter"
+                    data={[]}
+                    classNames={{
+                      root: 'bg-[#f1f5f9] border-0 rounded-2xl',
+                      input: 'bg-[#f1f5f9] border-0',
+                      section: 'bg-transparent',
+                      pill: 'bg-[#f1f5f9] border border-black/8 text-[#0f172a]',
+                      inputField: 'bg-[#f1f5f9] border-0',
+                      pillsList: 'gap-2',
                     }}
                   />
                 </Field>

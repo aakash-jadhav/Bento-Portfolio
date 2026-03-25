@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { IconName } from '../bento/Icon'
+import { TagsInput } from '@mantine/core'
 import {
   getProjectSidebarActiveBgClass,
   ProjectGridCard,
@@ -179,15 +180,18 @@ export function ProjectsAdminTab() {
               />
             </Field>
             <Field label="Tags (comma-separated)">
-              <input
-                className={inputClass}
-                value={selected.tags.join(', ')}
-                onChange={(e) => {
-                  const tags = e.target.value
-                    .split(',')
-                    .map((t) => t.trim())
-                    .filter(Boolean)
-                  updateSelected({ tags })
+              <TagsInput
+                value={selected.tags}
+                onChange={(nextTags) => updateSelected({ tags: nextTags })}
+                placeholder="Add a tag and press Enter"
+                data={[]}
+                classNames={{
+                  root: 'bg-[#f1f5f9] border-0 rounded-2xl',
+                  input: 'bg-[#f1f5f9] border-0',
+                  section: 'bg-transparent',
+                  pill: 'bg-[#f1f5f9] border border-black/8 text-[#0f172a]',
+                  inputField: 'bg-[#f1f5f9] border-0',
+                  pillsList: 'gap-2',
                 }}
               />
             </Field>
