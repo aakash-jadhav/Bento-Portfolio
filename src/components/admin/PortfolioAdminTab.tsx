@@ -1,7 +1,22 @@
+<<<<<<< HEAD
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { AdminPreviewPortfolioProvider } from '../../contexts/AdminPreviewPortfolioContext'
 import { useSiteContent } from '../../contexts/SiteContentContext'
 import type { PortfolioContent, PortfolioSectionId } from '../../data/siteContentTypes'
+=======
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ChangeEvent,
+} from 'react'
+import { AdminPreviewPortfolioProvider } from '../../contexts/AdminPreviewPortfolioContext'
+import { useSiteContent } from '../../contexts/SiteContentContext'
+import type { PortfolioContent, PortfolioSectionId } from '../../data/siteContentTypes'
+import { fetchResumeOnServer, uploadResumePdfToServer } from '../../resumeApi'
+>>>>>>> 2b523b1 (Add initial project structure with essential files and configurations)
 import { AboutMeCard } from '../bento/cards/AboutMeCard'
 import { EducationCard } from '../bento/cards/EducationCard'
 import { ExperienceCard } from '../bento/cards/ExperienceCard'
@@ -36,6 +51,16 @@ export function PortfolioAdminTab() {
   const [draft, setDraft] = useState<PortfolioContent>(() =>
     clonePortfolio(siteContent.portfolio),
   )
+<<<<<<< HEAD
+=======
+  const resumeFileRef = useRef<HTMLInputElement>(null)
+  const [hasServerResume, setHasServerResume] = useState<boolean | null>(null)
+  const [resumeUploading, setResumeUploading] = useState(false)
+  const [resumeFeedback, setResumeFeedback] = useState<{
+    type: 'ok' | 'err'
+    text: string
+  } | null>(null)
+>>>>>>> 2b523b1 (Add initial project structure with essential files and configurations)
 
   // Ensure admin UI reflects the latest `public/siteContent.json` after fetch.
   useEffect(() => {
@@ -63,6 +88,44 @@ export function PortfolioAdminTab() {
     downloadJson('siteContent.json', exportData)
   }, [draft, siteContent])
 
+<<<<<<< HEAD
+=======
+  useEffect(() => {
+    if (sectionId !== 'about') return
+    let cancelled = false
+    setResumeFeedback(null)
+    fetchResumeOnServer().then((v) => {
+      if (!cancelled) setHasServerResume(v)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [sectionId])
+
+  const onResumeFileChange = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    if (!file) return
+    setResumeFeedback(null)
+    setResumeUploading(true)
+    try {
+      await uploadResumePdfToServer(file)
+      setHasServerResume(true)
+      setResumeFeedback({
+        type: 'ok',
+        text: 'Resume saved. The Download Resume link on the site uses this file.',
+      })
+    } catch (err) {
+      setResumeFeedback({
+        type: 'err',
+        text: err instanceof Error ? err.message : 'Upload failed.',
+      })
+    } finally {
+      setResumeUploading(false)
+    }
+  }, [])
+
+>>>>>>> 2b523b1 (Add initial project structure with essential files and configurations)
   return (
     <div
       className={`${adminSurfaceClass} flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl p-3`}
@@ -113,6 +176,7 @@ export function PortfolioAdminTab() {
               setDraft={setDraft}
             />
           </div>
+<<<<<<< HEAD
           <div className="mt-8 flex flex-wrap gap-3 border-t border-[#f1f5f9] pt-5">
             <button
               type="button"
@@ -136,6 +200,76 @@ export function PortfolioAdminTab() {
             >
               Export JSON
             </button>
+=======
+          <div className="mt-8 flex flex-col gap-3 border-t border-[#f1f5f9] pt-5">
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={save}
+                className="cursor-pointer rounded-xl bg-[#4f46e5] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:brightness-105"
+              >
+                Save changes
+              </button>
+              <button
+                type="button"
+                onClick={resetDraft}
+                className="cursor-pointer rounded-xl border border-slate-200/90 bg-[#f1f5f9] px-5 py-2.5 text-sm font-semibold text-[#334155] transition hover:bg-[#e2e8f0]"
+              >
+                Cancel
+              </button>
+              {sectionId === 'about' ? (
+                <>
+                  <input
+                    ref={resumeFileRef}
+                    type="file"
+                    accept="application/pdf,.pdf"
+                    className="sr-only"
+                    aria-label="Upload PDF resume"
+                    onChange={onResumeFileChange}
+                  />
+                  <button
+                    type="button"
+                    disabled={resumeUploading}
+                    onClick={() => resumeFileRef.current?.click()}
+                    className="cursor-pointer rounded-xl border border-slate-200/90 bg-white px-5 py-2.5 text-sm font-semibold text-[#334155] transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+                    title="Stored in the database (Turso). Max 8 MB."
+                  >
+                    {resumeUploading ? 'Uploading…' : 'Upload PDF resume'}
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  onClick={exportJson}
+                  className="cursor-pointer rounded-xl border border-slate-200/90 bg-white px-5 py-2.5 text-sm font-semibold text-[#334155] transition hover:bg-slate-50"
+                  title="Download siteContent.json, replace public/siteContent.json, then redeploy."
+                >
+                  Export JSON
+                </button>
+              )}
+            </div>
+            {sectionId === 'about' ? (
+              <div className="text-xs leading-relaxed text-[#64748b]">
+                {resumeFeedback ? (
+                  <p
+                    className={
+                      resumeFeedback.type === 'ok' ? 'text-emerald-800' : 'text-red-600'
+                    }
+                  >
+                    {resumeFeedback.text}
+                  </p>
+                ) : hasServerResume ? (
+                  <p>A PDF resume is stored on the server for downloads.</p>
+                ) : (
+                  <p>
+                    No server resume yet. Downloads use{' '}
+                    <code className="rounded bg-slate-100 px-1 py-0.5 text-[11px]">/resume.pdf</code>{' '}
+                    or a legacy browser upload if present.
+                  </p>
+                )}
+              </div>
+            ) : null}
+>>>>>>> 2b523b1 (Add initial project structure with essential files and configurations)
           </div>
         </div>
       </section>

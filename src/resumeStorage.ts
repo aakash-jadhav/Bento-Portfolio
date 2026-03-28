@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+=======
+import { apiUrl } from './apiBase'
+
+>>>>>>> 2b523b1 (Add initial project structure with essential files and configurations)
 const DB_NAME = 'bento_resume_files_v1'
 const STORE_NAME = 'files'
 const RESUME_ID = 'resumePdf'
@@ -86,6 +91,7 @@ export async function getResumePdf(): Promise<{
   })
 }
 
+<<<<<<< HEAD
 export async function downloadResumePdf(): Promise<void> {
   const rec = await getResumePdf()
   if (!rec) {
@@ -109,6 +115,12 @@ export async function downloadResumePdf(): Promise<void> {
   a.href = url
   // Always treat the stored PDF as the resume and always download as `resume.pdf`
   // (ignores the original upload filename).
+=======
+function triggerBlobDownload(blob: Blob) {
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+>>>>>>> 2b523b1 (Add initial project structure with essential files and configurations)
   a.download = 'resume.pdf'
   document.body.appendChild(a)
   a.click()
@@ -116,3 +128,31 @@ export async function downloadResumePdf(): Promise<void> {
   URL.revokeObjectURL(url)
 }
 
+<<<<<<< HEAD
+=======
+export async function downloadResumePdf(): Promise<void> {
+  try {
+    const res = await fetch(apiUrl('/api/resume'), { cache: 'no-store' })
+    const type = res.headers.get('content-type') ?? ''
+    if (res.ok && type.includes('application/pdf')) {
+      const blob = await res.blob()
+      triggerBlobDownload(blob)
+      return
+    }
+  } catch {
+    // fall through to local / static fallbacks
+  }
+
+  const rec = await getResumePdf()
+  if (rec) {
+    triggerBlobDownload(rec.blob)
+    return
+  }
+
+  const res = await fetch('/resume.pdf', { cache: 'no-store' })
+  if (!res.ok) throw new Error('No resume available')
+  const blob = await res.blob()
+  triggerBlobDownload(blob)
+}
+
+>>>>>>> 2b523b1 (Add initial project structure with essential files and configurations)

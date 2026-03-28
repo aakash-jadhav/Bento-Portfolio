@@ -3,11 +3,19 @@ import { Link } from 'react-router-dom'
 import { PortfolioAdminTab } from '../components/admin/PortfolioAdminTab'
 import { ProjectsAdminTab } from '../components/admin/ProjectsAdminTab'
 import { useAuth } from '../contexts/AuthContext'
+<<<<<<< HEAD
+=======
+import { useSiteContent } from '../contexts/SiteContentContext'
+>>>>>>> 2b523b1 (Add initial project structure with essential files and configurations)
 
 type AdminTab = 'portfolio' | 'projects'
 
 export function AdminPage() {
   const { logout } = useAuth()
+<<<<<<< HEAD
+=======
+  const { saveError, clearSaveError } = useSiteContent()
+>>>>>>> 2b523b1 (Add initial project structure with essential files and configurations)
   const [tab, setTab] = useState<AdminTab>('portfolio')
 
   return (
@@ -67,6 +75,27 @@ export function AdminPage() {
         </div>
       </header>
 
+<<<<<<< HEAD
+=======
+      {saveError ? (
+        <div
+          className="shrink-0 border-b border-red-200 bg-red-50 px-4 py-2.5 text-sm text-red-800 sm:px-6"
+          role="alert"
+        >
+          <div className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-2">
+            <span>{saveError}</span>
+            <button
+              type="button"
+              onClick={() => clearSaveError()}
+              className="cursor-pointer rounded-md border border-red-200 bg-white px-2 py-1 text-xs font-semibold text-red-800 hover:bg-red-100/80"
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      ) : null}
+
+>>>>>>> 2b523b1 (Add initial project structure with essential files and configurations)
       <main className="mx-auto flex min-h-0 w-full max-w-[1600px] flex-1 flex-col px-4 pb-4 pt-2 sm:px-6 lg:min-h-0 lg:overflow-hidden">
         {tab === 'portfolio' ? <PortfolioAdminTab /> : <ProjectsAdminTab />}
       </main>

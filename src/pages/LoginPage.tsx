@@ -17,11 +17,16 @@ export function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+<<<<<<< HEAD
+=======
+  const [submitting, setSubmitting] = useState(false)
+>>>>>>> 2b523b1 (Add initial project structure with essential files and configurations)
 
   if (isAuthenticated) {
     return <Navigate to="/admin" replace />
   }
 
+<<<<<<< HEAD
   function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setError('')
@@ -31,6 +36,22 @@ export function LoginPage() {
       return
     }
     navigate(from, { replace: true })
+=======
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault()
+    setError('')
+    setSubmitting(true)
+    try {
+      const ok = await login(email, password)
+      if (!ok) {
+        setError('Invalid email or password, or server unreachable.')
+        return
+      }
+      navigate(from, { replace: true })
+    } finally {
+      setSubmitting(false)
+    }
+>>>>>>> 2b523b1 (Add initial project structure with essential files and configurations)
   }
 
   return (
@@ -113,10 +134,18 @@ export function LoginPage() {
 
             <button
               type="submit"
+<<<<<<< HEAD
               className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl py-3.5 text-[15px] font-semibold text-white shadow-sm transition hover:brightness-[1.05] active:brightness-95"
               style={{ backgroundColor: primary }}
             >
               Continue
+=======
+              disabled={submitting}
+              className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl py-3.5 text-[15px] font-semibold text-white shadow-sm transition hover:brightness-[1.05] active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+              style={{ backgroundColor: primary }}
+            >
+              {submitting ? 'Signing in…' : 'Continue'}
+>>>>>>> 2b523b1 (Add initial project structure with essential files and configurations)
               <ArrowRight className="h-[18px] w-[18px]" strokeWidth={2.25} aria-hidden />
             </button>
           </form>
