@@ -64,45 +64,44 @@ export function FeaturedProjectCard({
 
         <div className="min-h-0 flex-1" aria-hidden />
 
-        <div className="mt-2 flex min-w-0 shrink-0 flex-wrap items-center justify-between gap-x-2 gap-y-1 border-t border-slate-900/6 pt-2 pb-1">
-          <div
+        <div className="mt-2 flex w-full min-w-0 shrink-0 flex-wrap items-center gap-x-2.5 gap-y-1.5 border-t border-slate-900/6 pt-2 pb-1">
+          <a
+            href={f.codeUrl}
+            target="_blank"
+            rel="noreferrer noopener"
             className={cx(
-              'flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[10px] font-semibold uppercase tracking-wide',
+              'cursor-pointer inline-flex shrink-0 items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide',
               linkText,
             )}
           >
-            <a
-              href={f.codeUrl}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="cursor-pointer inline-flex items-center gap-1.5"
-            >
-              <Icon name="github" className="h-3 w-3 shrink-0" pathClassName={linkIconStroke} />
-              CODE
-            </a>
-            <a
-              href={f.demoUrl}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="cursor-pointer inline-flex items-center gap-1.5"
-            >
-              <Icon name="external" className="h-3 w-3 shrink-0" pathClassName={linkIconStroke} />
-              <span className="sr-only">Visit</span>
-              VISIT
-            </a>
-          </div>
-
+            <Icon name="github" className="h-3 w-3 shrink-0" pathClassName={linkIconStroke} />
+            CODE
+          </a>
+          <a
+            href={f.demoUrl}
+            target="_blank"
+            rel="noreferrer noopener"
+            className={cx(
+              'cursor-pointer inline-flex shrink-0 items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide',
+              linkText,
+            )}
+          >
+            <Icon name="external" className="h-3 w-3 shrink-0" pathClassName={linkIconStroke} />
+            <span className="sr-only">Visit</span>
+            VISIT
+          </a>
           <button
             type="button"
             onClick={onGoProjects}
+            aria-label="View more projects"
             className={cx(
-              'cursor-pointer shrink-0 rounded-full px-1.5 py-px text-[7px] font-bold uppercase leading-none tracking-wide ring-1 transition',
+              'ml-auto cursor-pointer shrink-0 whitespace-nowrap rounded-full px-1.5 py-0.5 text-[7px] font-semibold uppercase leading-none tracking-wide ring-1 transition',
               isSecure
                 ? 'bg-amber-200/55 text-amber-950 ring-amber-400/35 hover:bg-amber-200/80'
                 : 'bg-orange-200/50 text-orange-950 ring-orange-400/35 hover:bg-orange-200/75',
             )}
           >
-            {'More\u00a0›'}
+            VIEW MORE&nbsp;›
           </button>
         </div>
       </div>
