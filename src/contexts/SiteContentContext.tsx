@@ -80,6 +80,7 @@ async function fetchSiteContentFromApi(): Promise<SiteContent | null> {
   }
 }
 
+/** Dev-only fallback: bundled `public/siteContent.json`. Never used in production builds (avoids stale shipped JSON). */
 async function loadFromFile(): Promise<SiteContent | null> {
   try {
     const res = await fetch('/siteContent.json', { cache: 'no-store' })
@@ -89,6 +90,13 @@ async function loadFromFile(): Promise<SiteContent | null> {
   } catch {
     return null
   }
+}
+
+function getInitialSiteContent(): SiteContent {
+  if (import.meta.env.PROD || isRemoteApiConfigured()) {
+    return normalizeSiteContent(structuredClone(DEFAULT_SITE_CONTENT))
+  }
+  return normalizeSiteContent(loadFromLocalCache() ?? DEFAULT_SITE_CONTENT)
 }
 
 async function persistSiteContentToApi(
@@ -141,52 +149,52 @@ type SiteContentContextValue = {
 const SiteContentContext = createContext<SiteContentContextValue | null>(null)
 
 export function SiteContentProvider({ children }: { children: React.ReactNode }) {
-<<<<<<< HEAD
-  const [siteContent, setSiteContent] = useState<SiteContent>(() => {
-<<<<<<< HEAD
-    return DEFAULT_SITE_CONTENT
-  })
-
-  useEffect(() => {
-    let cancelled = false
-    loadFromFile().then((loaded) => {
-      if (cancelled) return
-      if (loaded) setSiteContent(loaded)
-    })
-=======
-    return loadFromLocalCache() ?? DEFAULT_SITE_CONTENT
-  })
-=======
   const [siteContent, setSiteContent] = useState<SiteContent>(() =>
     normalizeSiteContent(loadFromLocalCache() ?? DEFAULT_SITE_CONTENT),
   )
->>>>>>> b89b35d (Update project entries in site content and admin components)
   const [saveError, setSaveError] = useState<string | null>(null)
 
   useEffect(() => {
     let cancelled = false
-    ;(async () => {
-      const fromApi = await fetchSiteContentFromApi()
-      if (cancelled) return
-      if (fromApi) {
-        const next = normalizeSiteContent(fromApi)
-        setSiteContent(next)
-        saveToLocalCache(next)
-        return
-      }
-      const cached = loadFromLocalCache()
-      if (cached) {
-        setSiteContent(normalizeSiteContent(cached))
-        return
-      }
-      const loaded = await loadFromFile()
-      if (cancelled) return
-      if (loaded) {
-        const next = normalizeSiteContent(loaded)
-        setSiteContent(next)
-        saveToLocalCache(next)
-      }
-    })()
+      ; (async () => {
+        const fromApi = await fetchSiteContentFromApi()
+        if (cancelled) return
+        if (fromApi) {
+          const next = normalizeSiteContent(fromApi)
+          setSiteContent(next)
+          saveToLocalCache(next)
+          return
+        }
+
+        // API failed or missing: never use bundled siteContent.json when a real API URL is configured
+        // (live site must reflect the database, not an old build artifact).
+        if (isRemoteApiConfigured()) {
+          const cached = loadFromLocalCache()
+          if (cached) setSiteContent(normalizeSiteContent(cached))
+          return
+        }
+
+        // Production build without VITE_API_URL: avoid stale /siteContent.json; cache only.
+        if (import.meta.env.PROD) {
+          const cached = loadFromLocalCache()
+          if (cached) setSiteContent(normalizeSiteContent(cached))
+          return
+        }
+
+        // Local dev: cache, then optional static file seed
+        const cached = loadFromLocalCache()
+        if (cached) {
+          setSiteContent(normalizeSiteContent(cached))
+          return
+        }
+        const loaded = await loadFromFile()
+        if (cancelled) return
+        if (loaded) {
+          const next = normalizeSiteContent(loaded)
+          setSiteContent(next)
+          saveToLocalCache(next)
+        }
+      })()
 >>>>>>> 2b523b1 (Add initial project structure with essential files and configurations)
     return () => {
       cancelled = true
@@ -257,31 +265,31 @@ export function SiteContentProvider({ children }: { children: React.ReactNode })
     })
   }, [])
 
-  const value = useMemo(
-    () => ({
-      siteContent,
-      setPortfolio,
-      setProjects,
-      resetSiteContent,
-      saveError,
-      clearSaveError,
-    }),
-    [
-      siteContent,
-      setPortfolio,
-      setProjects,
-      resetSiteContent,
-      saveError,
-      clearSaveError,
-    ],
+const value = useMemo(
+  () => ({
+    siteContent,
+    setPortfolio,
+    setProjects,
+    resetSiteContent,
+    saveError,
+    clearSaveError,
+  }),
+  [
+    siteContent,
+    setPortfolio,
+    setProjects,
+    resetSiteContent,
+    saveError,
+    clearSaveError,
+  ],
 >>>>>>> 2b523b1 (Add initial project structure with essential files and configurations)
-  )
+)
 
-  return (
-    <SiteContentContext.Provider value={value}>
-      {children}
-    </SiteContentContext.Provider>
-  )
+return (
+  <SiteContentContext.Provider value={value}>
+    {children}
+  </SiteContentContext.Provider>
+)
 }
 
 export function useSiteContent() {

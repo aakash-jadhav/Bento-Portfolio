@@ -32,20 +32,6 @@ function clonePortfolio(p: PortfolioContent): PortfolioContent {
   return structuredClone(p)
 }
 
-function downloadJson(filename: string, data: unknown) {
-  const blob = new Blob([JSON.stringify(data, null, 2)], {
-    type: 'application/json',
-  })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename
-  document.body.appendChild(a)
-  a.click()
-  a.remove()
-  URL.revokeObjectURL(url)
-}
-
 export function PortfolioAdminTab() {
   const { siteContent, setPortfolio } = useSiteContent()
   const [sectionId, setSectionId] = useState<PortfolioSectionId>('about')
@@ -63,7 +49,7 @@ export function PortfolioAdminTab() {
   } | null>(null)
 >>>>>>> 2b523b1 (Add initial project structure with essential files and configurations)
 
-  // Ensure admin UI reflects the latest `public/siteContent.json` after fetch.
+  // Keep draft in sync when server content updates after load/save.
   useEffect(() => {
     setDraft(clonePortfolio(siteContent.portfolio))
   }, [siteContent.portfolio])
@@ -145,8 +131,8 @@ export function PortfolioAdminTab() {
                   type="button"
                   onClick={() => setSectionId(s.id)}
                   className={`flex w-full cursor-pointer items-center gap-2.5 py-2 pl-3 pr-4 text-left text-sm transition ${active
-                      ? `${s.activeBgClass} rounded-l-none rounded-r-full font-semibold text-[#0f172a] shadow-sm shadow-slate-900/5`
-                      : 'rounded-none text-[#64748b] hover:bg-slate-100/85 hover:rounded-l-none hover:rounded-r-full'
+                    ? `${s.activeBgClass} rounded-l-none rounded-r-full font-semibold text-[#0f172a] shadow-sm shadow-slate-900/5`
+                    : 'rounded-none text-[#64748b] hover:bg-slate-100/85 hover:rounded-l-none hover:rounded-r-full'
                     }`}
                 >
                   <Icon

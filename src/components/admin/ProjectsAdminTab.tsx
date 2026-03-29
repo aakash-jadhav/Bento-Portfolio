@@ -58,20 +58,6 @@ function Field({
 
 const inputClass = adminInputClass
 
-function downloadJson(filename: string, data: unknown) {
-  const blob = new Blob([JSON.stringify(data, null, 2)], {
-    type: 'application/json',
-  })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename
-  document.body.appendChild(a)
-  a.click()
-  a.remove()
-  URL.revokeObjectURL(url)
-}
-
 export function ProjectsAdminTab() {
   const { siteContent, setProjects } = useSiteContent()
   const [selectedIndex, setSelectedIndex] = useState(0)
@@ -109,14 +95,6 @@ export function ProjectsAdminTab() {
   const save = useCallback(() => {
     setProjects(cloneProjects(draft))
   }, [draft, setProjects])
-
-  const exportJson = useCallback(() => {
-    const exportData = {
-      ...siteContent,
-      projects: draft,
-    }
-    downloadJson('siteContent.json', exportData)
-  }, [draft, siteContent])
 
   const titleList = useMemo(
     () => draft.map((p) => p.title || 'Untitled'),
@@ -257,14 +235,6 @@ export function ProjectsAdminTab() {
                 className="cursor-pointer rounded-xl border border-slate-200/90 bg-[#f1f5f9] px-5 py-2.5 text-sm font-semibold text-[#334155] transition hover:bg-[#e2e8f0]"
               >
                 Cancel
-              </button>
-              <button
-                type="button"
-                onClick={exportJson}
-                className="cursor-pointer rounded-xl border border-slate-200/90 bg-white px-5 py-2.5 text-sm font-semibold text-[#334155] transition hover:bg-slate-50"
-                title="Download siteContent.json, replace public/siteContent.json, then redeploy."
-              >
-                Export JSON
               </button>
             </div>
           </div>
