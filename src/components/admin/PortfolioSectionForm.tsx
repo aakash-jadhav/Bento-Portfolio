@@ -1,7 +1,9 @@
+import { useState } from 'react'
 import type { Dispatch, SetStateAction } from 'react'
 import type { PortfolioContent, PortfolioSectionId } from '../../data/siteContentTypes'
 import { adminInputClass } from './adminTheme'
 import { TagsInput } from '@mantine/core'
+import { uploadResumePdfToServer } from '../../resumeApi'
 
 function Field({
   label,
@@ -31,6 +33,10 @@ export function PortfolioSectionForm({
   draft: PortfolioContent
   setDraft: Dispatch<SetStateAction<PortfolioContent>>
 }) {
+  const [selectedResumeFile, setSelectedResumeFile] = useState<File | null>(null)
+  const [uploadingResume, setUploadingResume] = useState(false)
+  const [resumeUploadError, setResumeUploadError] = useState<string | null>(null)
+
   const patch = (partial: Partial<PortfolioContent>) =>
     setDraft((d) => ({ ...d, ...partial }))
 
@@ -74,6 +80,55 @@ export function PortfolioSectionForm({
               value={a.location}
               onChange={(e) => patch({ about: { ...a, location: e.target.value } })}
             />
+          </Field>
+
+          <Field label="Resume (PDF)">
+            <div className="space-y-2">
+              <input
+                type="file"
+                accept="application/pdf"
+                className="block w-full text-xs text-[#334155] file:mr-4 file:rounded-xl file:border-0 file:bg-slate-100 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-[#0f172a] hover:file:bg-slate-200/80"
+                disabled={uploadingResume}
+                onChange={(e) => {
+                  const file = e.target.files?.[0] ?? null
+                  setSelectedResumeFile(file)
+                  setResumeUploadError(null)
+                }}
+              />
+
+              <div className="flex flex-wrap gap-3 items-center pt-1">
+                <button
+                  type="button"
+                  disabled={uploadingResume}
+                  onClick={async () => {
+                    if (!selectedResumeFile) {
+                      setResumeUploadError('Please choose a PDF file first.')
+                      return
+                    }
+                    try {
+                      setUploadingResume(true)
+                      setResumeUploadError(null)
+                      await uploadResumePdfToServer(selectedResumeFile)
+                      setSelectedResumeFile(null)
+                    } catch (err) {
+                      setResumeUploadError(
+                        err instanceof Error ? err.message : 'Upload failed',
+                      )
+                    } finally {
+                      setUploadingResume(false)
+                    }
+                  }}
+                  className="cursor-pointer rounded-xl bg-[#4f46e5] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:brightness-105 disabled:opacity-60"
+                >
+                  {uploadingResume ? 'Uploading…' : 'Upload Resume'}
+                </button>
+                {resumeUploadError ? (
+                  <span className="text-xs font-semibold text-red-600">
+                    {resumeUploadError}
+                  </span>
+                ) : null}
+              </div>
+            </div>
           </Field>
         </div>
       )
