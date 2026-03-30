@@ -179,22 +179,6 @@ const PALETTES: Record<
   },
 }
 
-const PALETTE_KEYS = [
-  'red',
-  'orange',
-  'amber',
-  'yellow',
-  'lime',
-  'emerald',
-  'teal',
-  'cyan',
-  'sky',
-  'indigo',
-  'violet',
-  'purple',
-  'fuchsia',
-] as const
-
 type PaletteKey = keyof typeof PALETTES
 
 /** Maps portfolio card tone → saturated palette used for project grid styling. */
@@ -214,7 +198,7 @@ export function toneToPaletteKey(tone: TagTone): PaletteKey {
 }
 
 /** Same hue as `palette.cardBg` for ProjectGridCard at this index (for admin sidebar active state). */
-const SIDEBAR_ACTIVE_BG: Record<(typeof PALETTE_KEYS)[number], string> = {
+const SIDEBAR_ACTIVE_BG: Record<PaletteKey, string> = {
   red: 'bg-red-100/60',
   orange: 'bg-orange-100/60',
   amber: 'bg-amber-100/60',

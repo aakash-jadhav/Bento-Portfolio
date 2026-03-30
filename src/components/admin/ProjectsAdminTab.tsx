@@ -67,13 +67,17 @@ export function ProjectsAdminTab() {
 
   // Ensure admin UI reflects the latest `public/siteContent.json` after fetch.
   useEffect(() => {
-    setDraft(cloneProjects(siteContent.projects))
+    queueMicrotask(() => {
+      setDraft(cloneProjects(siteContent.projects))
+    })
   }, [siteContent.projects])
 
   useEffect(() => {
-    if (selectedIndex >= draft.length) {
-      setSelectedIndex(Math.max(0, draft.length - 1))
-    }
+    queueMicrotask(() => {
+      if (selectedIndex >= draft.length) {
+        setSelectedIndex(Math.max(0, draft.length - 1))
+      }
+    })
   }, [draft.length, selectedIndex])
 
   const safeIndex = Math.min(selectedIndex, Math.max(0, draft.length - 1))

@@ -32,26 +32,32 @@ function clonePortfolio(p: PortfolioContent): PortfolioContent {
   return structuredClone(p)
 }
 
+function downloadJson(filename: string, data: unknown) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], {
+    type: 'application/json',
+  })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  URL.revokeObjectURL(url)
+}
+
 export function PortfolioAdminTab() {
   const { siteContent, setPortfolio } = useSiteContent()
   const [sectionId, setSectionId] = useState<PortfolioSectionId>('about')
   const [draft, setDraft] = useState<PortfolioContent>(() =>
     clonePortfolio(siteContent.portfolio),
   )
-<<<<<<< HEAD
-=======
-  const resumeFileRef = useRef<HTMLInputElement>(null)
-  const [hasServerResume, setHasServerResume] = useState<boolean | null>(null)
-  const [resumeUploading, setResumeUploading] = useState(false)
-  const [resumeFeedback, setResumeFeedback] = useState<{
-    type: 'ok' | 'err'
-    text: string
-  } | null>(null)
->>>>>>> 2b523b1 (Add initial project structure with essential files and configurations)
 
   // Keep draft in sync when server content updates after load/save.
   useEffect(() => {
-    setDraft(clonePortfolio(siteContent.portfolio))
+    queueMicrotask(() => {
+      setDraft(clonePortfolio(siteContent.portfolio))
+    })
   }, [siteContent.portfolio])
 
   const meta = useMemo(
@@ -75,44 +81,6 @@ export function PortfolioAdminTab() {
     downloadJson('siteContent.json', exportData)
   }, [draft, siteContent])
 
-<<<<<<< HEAD
-=======
-  useEffect(() => {
-    if (sectionId !== 'about') return
-    let cancelled = false
-    setResumeFeedback(null)
-    fetchResumeOnServer().then((v) => {
-      if (!cancelled) setHasServerResume(v)
-    })
-    return () => {
-      cancelled = true
-    }
-  }, [sectionId])
-
-  const onResumeFileChange = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    e.target.value = ''
-    if (!file) return
-    setResumeFeedback(null)
-    setResumeUploading(true)
-    try {
-      await uploadResumePdfToServer(file)
-      setHasServerResume(true)
-      setResumeFeedback({
-        type: 'ok',
-        text: 'Resume saved. The Download Resume link on the site uses this file.',
-      })
-    } catch (err) {
-      setResumeFeedback({
-        type: 'err',
-        text: err instanceof Error ? err.message : 'Upload failed.',
-      })
-    } finally {
-      setResumeUploading(false)
-    }
-  }, [])
-
->>>>>>> 2b523b1 (Add initial project structure with essential files and configurations)
   return (
     <div
       className={`${adminSurfaceClass} flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl p-3`}
@@ -164,149 +132,77 @@ export function PortfolioAdminTab() {
                 setDraft={setDraft}
               />
             </div>
-<<<<<<< HEAD
-  <div className="mt-8 flex flex-wrap gap-3 border-t border-[#f1f5f9] pt-5">
-    <button
-      type="button"
-      onClick={save}
-      className="cursor-pointer rounded-xl bg-[#4f46e5] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:brightness-105"
-    >
-      Save changes
-    </button>
-    <button
-      type="button"
-      onClick={resetDraft}
-      className="cursor-pointer rounded-xl border border-slate-200/90 bg-[#f1f5f9] px-5 py-2.5 text-sm font-semibold text-[#334155] transition hover:bg-[#e2e8f0]"
-    >
-      Cancel
-    </button>
-    <button
-      type="button"
-      onClick={exportJson}
-      className="cursor-pointer rounded-xl border border-slate-200/90 bg-white px-5 py-2.5 text-sm font-semibold text-[#334155] transition hover:bg-slate-50"
-      title="Download siteContent.json, replace public/siteContent.json, then redeploy."
-    >
-      Export JSON
-    </button>
-=======
-          <div className="mt-8 flex flex-col gap-3 border-t border-[#f1f5f9] pt-5">
-      <div className="flex flex-wrap gap-3">
-        <button
-          type="button"
-          onClick={save}
-          className="cursor-pointer rounded-xl bg-[#4f46e5] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:brightness-105"
-        >
-          Save changes
-        </button>
-        <button
-          type="button"
-          onClick={resetDraft}
-          className="cursor-pointer rounded-xl border border-slate-200/90 bg-[#f1f5f9] px-5 py-2.5 text-sm font-semibold text-[#334155] transition hover:bg-[#e2e8f0]"
-        >
-          Cancel
-        </button>
-        {sectionId === 'about' ? (
-          <>
-            <input
-              ref={resumeFileRef}
-              type="file"
-              accept="application/pdf,.pdf"
-              className="sr-only"
-              aria-label="Upload PDF resume"
-              onChange={onResumeFileChange}
-            />
-            <button
-              type="button"
-              disabled={resumeUploading}
-              onClick={() => resumeFileRef.current?.click()}
-              className="cursor-pointer rounded-xl border border-slate-200/90 bg-white px-5 py-2.5 text-sm font-semibold text-[#334155] transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
-              title="Stored in the database (Turso). Max 8 MB."
-            >
-              {resumeUploading ? 'Uploading…' : 'Upload PDF resume'}
-            </button>
-          </>
-        ) : (
-          <button
-            type="button"
-            onClick={exportJson}
-            className="cursor-pointer rounded-xl border border-slate-200/90 bg-white px-5 py-2.5 text-sm font-semibold text-[#334155] transition hover:bg-slate-50"
-            title="Download siteContent.json, replace public/siteContent.json, then redeploy."
-          >
-            Export JSON
-          </button>
-        )}
-      </div>
-      {sectionId === 'about' ? (
-        <div className="text-xs leading-relaxed text-[#64748b]">
-          {resumeFeedback ? (
-            <p
-              className={
-                resumeFeedback.type === 'ok' ? 'text-emerald-800' : 'text-red-600'
-              }
-            >
-              {resumeFeedback.text}
-            </p>
-          ) : hasServerResume ? (
-            <p>A PDF resume is stored on the server for downloads.</p>
-          ) : (
-            <p>
-              No server resume yet. Downloads use{' '}
-              <code className="rounded bg-slate-100 px-1 py-0.5 text-[11px]">/resume.pdf</code>{' '}
-              or a legacy browser upload if present.
-            </p>
-          )}
-        </div>
-      ) : null}
->>>>>>> 2b523b1 (Add initial project structure with essential files and configurations)
-    </div>
-  </div>
-      </section >
-
-    {/* Preview — half of remaining 75%, off-white surface */ }
-    < section
-  className = {`flex min-h-[280px] flex-col overflow-hidden rounded-xl lg:min-h-0 ${adminSurfaceClass} shadow-sm shadow-slate-900/5 ring-1 ring-slate-200/60`
-}
-      >
-        <div className="shrink-0 rounded-t-xl bg-white px-4 py-3.5 lg:px-5">
-          <div className="flex items-center justify-between gap-3">
-            <h2 className="text-sm font-semibold tracking-tight text-[#0f172a]">
-              Live preview
-            </h2>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200/90 bg-emerald-50/95 px-2.5 py-1 text-[11px] font-semibold text-emerald-800">
-              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" aria-hidden />
-              Auto-syncing
-            </span>
-          </div>
-        </div>
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-4 pt-3 lg:px-5 lg:pb-5">
-          <AdminPreviewPortfolioProvider value={draft}>
-            <div className="mx-auto w-full max-w-[380px]">
-              {sectionId === 'about' ? <AboutMeCard /> : null}
-              {sectionId === 'summary' ? <SummaryObjectiveCard /> : null}
-              {sectionId === 'experience' ? <ExperienceCard /> : null}
-              {sectionId === 'education' ? <EducationCard /> : null}
-              {sectionId === 'skills' ? (
-                <SkillsExpertiseCard showExploringFooter />
-              ) : null}
-              {sectionId === 'featuredEco' ? (
-                <FeaturedProjectCard
-                  variant="home"
-                  project="eco"
-                  onGoProjects={() => {}}
-                />
-              ) : null}
-              {sectionId === 'featuredSecure' ? (
-                <FeaturedProjectCard
-                  variant="home"
-                  project="secure"
-                  onGoProjects={() => {}}
-                />
-              ) : null}
+            <div className="mt-8 flex flex-wrap gap-3 border-t border-[#f1f5f9] pt-5">
+              <button
+                type="button"
+                onClick={save}
+                className="cursor-pointer rounded-xl bg-[#4f46e5] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:brightness-105"
+              >
+                Save changes
+              </button>
+              <button
+                type="button"
+                onClick={resetDraft}
+                className="cursor-pointer rounded-xl border border-slate-200/90 bg-[#f1f5f9] px-5 py-2.5 text-sm font-semibold text-[#334155] transition hover:bg-[#e2e8f0]"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={exportJson}
+                className="cursor-pointer rounded-xl border border-slate-200/90 bg-white px-5 py-2.5 text-sm font-semibold text-[#334155] transition hover:bg-slate-50"
+                title="Download siteContent.json, replace public/siteContent.json, then redeploy."
+              >
+                Export JSON
+              </button>
             </div>
-          </AdminPreviewPortfolioProvider>
-        </div>
-      </section >
-      </div >
-    </div >
+          </div>
+        </section>
+
+        {/* Preview — half of remaining 75%, off-white surface */}
+        <section
+          className={`flex min-h-[280px] flex-col overflow-hidden rounded-xl lg:min-h-0 ${adminSurfaceClass} shadow-sm shadow-slate-900/5 ring-1 ring-slate-200/60`}
+        >
+          <div className="shrink-0 rounded-t-xl bg-white px-4 py-3.5 lg:px-5">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-sm font-semibold tracking-tight text-[#0f172a]">
+                Live preview
+              </h2>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200/90 bg-emerald-50/95 px-2.5 py-1 text-[11px] font-semibold text-emerald-800">
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" aria-hidden />
+                Auto-syncing
+              </span>
+            </div>
+          </div>
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-4 pt-3 lg:px-5 lg:pb-5">
+            <AdminPreviewPortfolioProvider value={draft}>
+              <div className="mx-auto w-full max-w-[380px]">
+                {sectionId === 'about' ? <AboutMeCard /> : null}
+                {sectionId === 'summary' ? <SummaryObjectiveCard /> : null}
+                {sectionId === 'experience' ? <ExperienceCard /> : null}
+                {sectionId === 'education' ? <EducationCard /> : null}
+                {sectionId === 'skills' ? (
+                  <SkillsExpertiseCard showExploringFooter />
+                ) : null}
+                {sectionId === 'featuredEco' ? (
+                  <FeaturedProjectCard
+                    variant="home"
+                    project="eco"
+                    onGoProjects={() => { }}
+                  />
+                ) : null}
+                {sectionId === 'featuredSecure' ? (
+                  <FeaturedProjectCard
+                    variant="home"
+                    project="secure"
+                    onGoProjects={() => { }}
+                  />
+                ) : null}
+              </div>
+            </AdminPreviewPortfolioProvider>
+          </div>
+        </section>
+      </div>
+    </div>
   )
 }

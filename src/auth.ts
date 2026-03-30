@@ -1,18 +1,3 @@
-<<<<<<< HEAD
-/** Simple client-side session flag (replace with real auth / API later). */
-export const AUTH_STORAGE_KEY = 'bento_resume_admin_session'
-
-export function readSession(): boolean {
-  try {
-    return localStorage.getItem(AUTH_STORAGE_KEY) === '1'
-  } catch {
-    return false
-  }
-}
-
-export function writeSession(): void {
-  localStorage.setItem(AUTH_STORAGE_KEY, '1')
-=======
 /** Admin JWT from POST /api/auth/login (stored after successful login). */
 export const AUTH_STORAGE_KEY = 'bento_resume_admin_session'
 
@@ -38,7 +23,6 @@ export function readSession(): boolean {
 
 export function writeSession(token: string): void {
   localStorage.setItem(AUTH_STORAGE_KEY, token)
->>>>>>> 2b523b1 (Add initial project structure with essential files and configurations)
 }
 
 export function clearSession(): void {

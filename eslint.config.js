@@ -20,4 +20,11 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  {
+    files: ['src/contexts/**/*.tsx', 'src/components/bento/cards/ProjectGridCard.tsx'],
+    rules: {
+      // Context modules and palette helpers legitimately export non-component symbols.
+      'react-refresh/only-export-components': 'off',
+    },
+  },
 ])
