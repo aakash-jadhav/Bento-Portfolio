@@ -57,14 +57,14 @@ export const PORTFOLIO_SECTIONS: readonly PortfolioSectionMeta[] = [
   },
   {
     id: 'featuredEco',
-    label: 'Eco-Track',
+    label: 'Featured project 1',
     hint: 'Featured project (home)',
     activeBgClass: 'bg-[#F8EBE0]',
     Icon: Star,
   },
   {
     id: 'featuredSecure',
-    label: 'SecurePay',
+    label: 'Featured project 2',
     hint: 'Featured project (home)',
     activeBgClass: 'bg-[#FFF7D9]',
     Icon: Star,

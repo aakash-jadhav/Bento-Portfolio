@@ -195,6 +195,24 @@ const PALETTE_KEYS = [
   'fuchsia',
 ] as const
 
+type PaletteKey = keyof typeof PALETTES
+
+/** Maps portfolio card tone → saturated palette used for project grid styling. */
+export function toneToPaletteKey(tone: TagTone): PaletteKey {
+  const map: Record<TagTone, PaletteKey> = {
+    purple: 'purple',
+    pink: 'fuchsia',
+    green: 'emerald',
+    beige: 'amber',
+    blue: 'sky',
+    about: 'indigo',
+    skills: 'violet',
+    resume: 'violet',
+    neutral: 'cyan',
+  }
+  return map[tone] ?? 'purple'
+}
+
 /** Same hue as `palette.cardBg` for ProjectGridCard at this index (for admin sidebar active state). */
 const SIDEBAR_ACTIVE_BG: Record<(typeof PALETTE_KEYS)[number], string> = {
   red: 'bg-red-100/60',
@@ -212,10 +230,9 @@ const SIDEBAR_ACTIVE_BG: Record<(typeof PALETTE_KEYS)[number], string> = {
   fuchsia: 'bg-fuchsia-100/60',
 }
 
-/** Aligns with preview card color for `paletteIndex` (rotation matches ProjectGridCard). */
-export function getProjectSidebarActiveBgClass(paletteIndex: number): string {
-  const k = PALETTE_KEYS[paletteIndex % PALETTE_KEYS.length]
-  return SIDEBAR_ACTIVE_BG[k]
+/** Matches live preview / grid card background for the project’s tone. */
+export function getProjectSidebarActiveBgForTone(tone: TagTone): string {
+  return SIDEBAR_ACTIVE_BG[toneToPaletteKey(tone)]
 }
 
 function projectTypeLabel(tags: readonly string[], icon: IconName): 'web' | 'mobile' | 'chrome' {
@@ -239,14 +256,14 @@ function TechChip({
       type="button"
       onClick={() => onCopy(value)}
       className={cx(
-        'cursor-pointer inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-semibold ring-1 backdrop-blur-md',
+        'min-w-0 max-w-full cursor-pointer inline-flex items-center justify-center rounded-full px-1 py-px text-[7px] font-medium leading-none ring-1 backdrop-blur-md',
         palette.techBg,
         palette.techText,
         palette.techRing,
       )}
       aria-label={`Copy ${value}`}
     >
-      {value}
+      <span className="min-w-0 truncate">{value}</span>
     </button>
   )
 }
@@ -257,20 +274,23 @@ export function ProjectGridCard({
   description,
   tags,
   icon: iconName,
-  paletteIndex,
+  codeUrl = '',
+  demoUrl = '',
   onCopy,
 }: {
   tone: TagTone
   title: string
-  subtitle?: string
   description: string
   tags: readonly string[]
   icon: IconName
-  paletteIndex: number
+  codeUrl?: string
+  demoUrl?: string
   onCopy: (value: string) => void
 }) {
-  const paletteKey = PALETTE_KEYS[paletteIndex % PALETTE_KEYS.length]
+  const paletteKey = toneToPaletteKey(tone)
   const palette = PALETTES[paletteKey]
+  const codeHref = codeUrl.trim()
+  const demoHref = demoUrl.trim()
 
   return (
     <BentoCard
@@ -287,7 +307,7 @@ export function ProjectGridCard({
         <div className="flex items-center justify-between gap-2">
           <span
             className={cx(
-              'grid h-8 w-8 shrink-0 place-items-center rounded-md ring-1 backdrop-blur-md',
+              'grid h-8 w-8 shrink-0 place-items-center rounded-full ring-1 backdrop-blur-md',
               palette.chipBg,
               palette.chipRing,
             )}
@@ -309,51 +329,83 @@ export function ProjectGridCard({
           </button>
         </div>
 
-        <div className="mt-1.5 text-sm font-semibold leading-snug tracking-tight text-slate-900">{title}</div>
+        <div className="mt-2 text-lg font-bold leading-snug tracking-tight text-slate-900">
+          {title}
+        </div>
 
-        {/* Reserve 4 lines even when description is short (whitespace remains). */}
-        <div className="mt-1 min-h-[66px]">
-          <p className="clamp-4 text-xs leading-snug text-slate-600">{description}</p>
+        {/* Reserve 4 lines at body size when description is short. */}
+        <div className="mt-1.5 min-h-23">
+          <p className="clamp-4 text-sm leading-relaxed text-slate-800">{description}</p>
         </div>
 
         {/* Bottom content: tech chips + footer (footer stays at the bottom). */}
-        <div className="mt-auto flex flex-col">
-          {/* Tech chips: exactly 2 lines max */}
-          <div className="max-h-11 overflow-hidden">
-            <div className="flex flex-wrap gap-2">
-              {tags.map((t) => (
-                <TechChip key={t} value={t} palette={palette} onCopy={onCopy} />
+        <div className="mt-auto flex min-h-0 flex-col">
+          {/* ~2 lines of compact chips: enough height + gap so rows aren’t clipped */}
+          <div className="max-h-15 min-h-0 w-full overflow-x-hidden overflow-y-auto">
+            <div className="flex w-full flex-wrap gap-x-2.5 gap-y-2">
+              {tags.map((t, ti) => (
+                <TechChip key={`${t}-${ti}`} value={t} palette={palette} onCopy={onCopy} />
               ))}
             </div>
           </div>
 
-          {/* Divider + footer padding */}
-          <div className={cx('mt-2 border-t pt-2', palette.divider)}>
-            <div className="flex items-center justify-between">
-              <button
-                type="button"
-                className={cx(
-                  'cursor-pointer inline-flex items-center gap-2 rounded-md bg-transparent p-0 text-left text-xs font-semibold',
-                  palette.chipText,
-                  'hover:text-opacity-80',
-                )}
-              >
-                <Icon name="github" className="h-3.5 w-3.5 shrink-0" pathClassName={palette.stroke} />
-                CODE
-              </button>
+          <div className={cx('mt-1.5 border-t pt-1.5', palette.divider)}>
+            <div className="flex items-center justify-between gap-2">
+              {codeHref ? (
+                <a
+                  href={codeHref}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className={cx(
+                    'inline-flex items-center gap-1.5 text-[11px] font-semibold leading-none',
+                    palette.chipText,
+                    'hover:opacity-80',
+                  )}
+                >
+                  <Icon name="github" className="h-3 w-3 shrink-0" pathClassName={palette.stroke} />
+                  CODE
+                </a>
+              ) : (
+                <span
+                  className={cx(
+                    'inline-flex cursor-default items-center gap-1.5 text-[11px] font-semibold leading-none opacity-40',
+                    palette.chipText,
+                  )}
+                  title="Add a code repository link in admin"
+                >
+                  <Icon name="github" className="h-3 w-3 shrink-0" pathClassName={palette.stroke} />
+                  CODE
+                </span>
+              )}
 
-              <button
-                type="button"
-                className={cx(
-                  'cursor-pointer inline-flex items-center gap-2 rounded-md bg-transparent p-0 text-right text-xs font-semibold',
-                  palette.chipText,
-                  'hover:text-opacity-80',
-                )}
-              >
-                <span className="sr-only">Demo</span>
-                DEMO
-                <Icon name="external" className="h-3.5 w-3.5 shrink-0" pathClassName={palette.stroke} />
-              </button>
+              {demoHref ? (
+                <a
+                  href={demoHref}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className={cx(
+                    'inline-flex items-center gap-1.5 text-[11px] font-semibold leading-none',
+                    palette.chipText,
+                    'hover:opacity-80',
+                  )}
+                >
+                  <Icon name="external" className="h-3 w-3 shrink-0" pathClassName={palette.stroke} />
+                  <span className="sr-only">Visit</span>
+                  VISIT
+                </a>
+              ) : (
+                <span
+                  className={cx(
+                    'inline-flex cursor-default items-center gap-1.5 text-[11px] font-semibold leading-none opacity-40',
+                    palette.chipText,
+                  )}
+                  title="Add a visit link in admin"
+                >
+                  <Icon name="external" className="h-3 w-3 shrink-0" pathClassName={palette.stroke} />
+                  <span className="sr-only">Visit</span>
+                  VISIT
+                </span>
+              )}
             </div>
           </div>
         </div>

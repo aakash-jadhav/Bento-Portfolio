@@ -71,7 +71,7 @@ export function ProjectsPageFull({ onBack }: { onBack: () => void }) {
         )}
       >
         {projects.map((p, idx) => (
-          <ProjectGridCard key={`${p.title}-${idx}`} {...p} paletteIndex={idx} onCopy={copyText} />
+          <ProjectGridCard key={`${p.title}-${idx}`} {...p} onCopy={copyText} />
         ))}
       </div>
     </div>

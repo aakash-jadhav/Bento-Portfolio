@@ -246,7 +246,7 @@ export function PortfolioSectionForm({
               }
             />
           </Field>
-          <Field label="Demo URL">
+          <Field label="Visit link">
             <input
               className={inputClass}
               value={f.demoUrl}

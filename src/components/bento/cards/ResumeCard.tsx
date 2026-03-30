@@ -1,7 +1,7 @@
 import { BentoCard } from '../BentoCard'
 import { Icon } from '../Icon'
 import type { TagTone } from '../types'
-import { cx } from '../utils'
+import { cx, PORTFOLIO_BODY_TEXT_CLASS } from '../utils'
 
 type ResumeCardProps = {
   className?: string
@@ -41,7 +41,7 @@ export function ResumeCard({ className, variant }: ResumeCardProps) {
       <div className="text-lg font-semibold tracking-tight text-slate-900">
         Full Portfolio &amp; CV
       </div>
-      <div className="clamp-2 mt-1 text-sm text-slate-700/70">
+      <div className={cx('clamp-2 mt-1', PORTFOLIO_BODY_TEXT_CLASS)}>
         Available for offline reading in PDF format.
       </div>
       <button type="button" className={buttonClass}>

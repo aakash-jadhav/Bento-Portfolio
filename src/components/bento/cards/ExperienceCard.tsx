@@ -1,7 +1,7 @@
 import { usePortfolioForCard } from '../../../contexts/AdminPreviewPortfolioContext'
 import { BentoCard } from '../BentoCard'
 import { Icon } from '../Icon'
-import { cx } from '../utils'
+import { cx, PORTFOLIO_BODY_TEXT_CLASS } from '../utils'
 
 type ExperienceCardProps = {
   className?: string
@@ -27,7 +27,7 @@ export function ExperienceCard({ className }: ExperienceCardProps) {
     >
       <div className="flex min-h-0 h-full flex-1 flex-col">
         <div className="text-3xl font-semibold tracking-tight text-slate-900">{x.years}</div>
-        <div className="mt-1 text-xs font-medium text-slate-800/70">{x.role}</div>
+        <div className={cx('mt-1 font-medium', PORTFOLIO_BODY_TEXT_CLASS)}>{x.role}</div>
         <div className="mt-auto text-[11px] font-semibold tracking-[0.16em] text-rose-900/90">
           {x.footer}
         </div>

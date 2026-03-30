@@ -1,7 +1,7 @@
 import { usePortfolioForCard } from '../../../contexts/AdminPreviewPortfolioContext'
 import { BentoCard } from '../BentoCard'
 import { Icon } from '../Icon'
-import { cx } from '../utils'
+import { cx, PORTFOLIO_BODY_TEXT_CLASS } from '../utils'
 
 type SummaryObjectiveCardProps = {
   className?: string
@@ -31,7 +31,7 @@ export function SummaryObjectiveCard({ className }: SummaryObjectiveCardProps) {
       <div className="text-lg font-bold leading-snug tracking-tight text-[#1F2937]">
         {s.headline}
       </div>
-      <p className="clamp-4 mt-2.5 text-xs font-normal leading-[1.45] text-slate-600">
+      <p className={cx('clamp-4 mt-2.5 font-normal', PORTFOLIO_BODY_TEXT_CLASS)}>
         {s.body}
       </p>
     </BentoCard>

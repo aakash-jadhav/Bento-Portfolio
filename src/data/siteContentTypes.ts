@@ -64,11 +64,12 @@ export type PortfolioContent = {
 
 export type ProjectEditorEntry = {
   tone: TagTone
-  subtitle: string
   title: string
   description: string
   tags: string[]
   icon: IconName
+  codeUrl: string
+  demoUrl: string
 }
 
 export type SiteContent = {

@@ -13,8 +13,16 @@ import {
 =======
 import { apiUrl } from '../apiBase'
 import { readAuthToken } from '../auth'
+<<<<<<< HEAD
 import { DEFAULT_SITE_CONTENT } from '../data/siteContentDefaults'
 >>>>>>> 2b523b1 (Add initial project structure with essential files and configurations)
+=======
+import {
+  DEFAULT_SITE_CONTENT,
+  normalizeProjectEditorEntry,
+  normalizeSiteContent,
+} from '../data/siteContentDefaults'
+>>>>>>> b89b35d (Update project entries in site content and admin components)
 import type {
   PortfolioContent,
   ProjectEditorEntry,
@@ -133,6 +141,7 @@ type SiteContentContextValue = {
 const SiteContentContext = createContext<SiteContentContextValue | null>(null)
 
 export function SiteContentProvider({ children }: { children: React.ReactNode }) {
+<<<<<<< HEAD
   const [siteContent, setSiteContent] = useState<SiteContent>(() => {
 <<<<<<< HEAD
     return DEFAULT_SITE_CONTENT
@@ -147,6 +156,11 @@ export function SiteContentProvider({ children }: { children: React.ReactNode })
 =======
     return loadFromLocalCache() ?? DEFAULT_SITE_CONTENT
   })
+=======
+  const [siteContent, setSiteContent] = useState<SiteContent>(() =>
+    normalizeSiteContent(loadFromLocalCache() ?? DEFAULT_SITE_CONTENT),
+  )
+>>>>>>> b89b35d (Update project entries in site content and admin components)
   const [saveError, setSaveError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -155,20 +169,22 @@ export function SiteContentProvider({ children }: { children: React.ReactNode })
       const fromApi = await fetchSiteContentFromApi()
       if (cancelled) return
       if (fromApi) {
-        setSiteContent(fromApi)
-        saveToLocalCache(fromApi)
+        const next = normalizeSiteContent(fromApi)
+        setSiteContent(next)
+        saveToLocalCache(next)
         return
       }
       const cached = loadFromLocalCache()
       if (cached) {
-        setSiteContent(cached)
+        setSiteContent(normalizeSiteContent(cached))
         return
       }
       const loaded = await loadFromFile()
       if (cancelled) return
       if (loaded) {
-        setSiteContent(loaded)
-        saveToLocalCache(loaded)
+        const next = normalizeSiteContent(loaded)
+        setSiteContent(next)
+        saveToLocalCache(next)
       }
     })()
 >>>>>>> 2b523b1 (Add initial project structure with essential files and configurations)
@@ -199,9 +215,16 @@ export function SiteContentProvider({ children }: { children: React.ReactNode })
 
   const setProjects = useCallback((next: ProjectEditorEntry[]) => {
     setSiteContent((prev) => {
+<<<<<<< HEAD
       const merged: SiteContent = { ...prev, projects: next }
 <<<<<<< HEAD
 =======
+=======
+      const merged: SiteContent = {
+        ...prev,
+        projects: next.map(normalizeProjectEditorEntry),
+      }
+>>>>>>> b89b35d (Update project entries in site content and admin components)
       saveToLocalCache(merged)
       void persistSiteContentToApi(merged).then((r) => {
         if (!r.ok) setSaveError(r.message ?? 'Save failed')
@@ -214,6 +237,7 @@ export function SiteContentProvider({ children }: { children: React.ReactNode })
 
   const resetSiteContent = useCallback(() => {
 <<<<<<< HEAD
+<<<<<<< HEAD
     setSiteContent(structuredClone(DEFAULT_SITE_CONTENT))
   }, [])
 
@@ -222,6 +246,9 @@ export function SiteContentProvider({ children }: { children: React.ReactNode })
     [siteContent, setPortfolio, setProjects, resetSiteContent],
 =======
     const next = structuredClone(DEFAULT_SITE_CONTENT)
+=======
+    const next = normalizeSiteContent(structuredClone(DEFAULT_SITE_CONTENT))
+>>>>>>> b89b35d (Update project entries in site content and admin components)
     saveToLocalCache(next)
     setSiteContent(next)
     void persistSiteContentToApi(next).then((r) => {

@@ -1,7 +1,7 @@
 import { usePortfolioForCard } from '../../../contexts/AdminPreviewPortfolioContext'
 import { BentoCard } from '../BentoCard'
 import { Icon } from '../Icon'
-import { cx } from '../utils'
+import { cx, PORTFOLIO_BODY_TEXT_CLASS } from '../utils'
 
 type FeaturedProjectCardProps = {
   className?: string
@@ -28,6 +28,7 @@ export function FeaturedProjectCard({
   return (
     <BentoCard
       tone="beige"
+      padding="sm"
       title={f.headerLabel}
       headerVariant="split"
       headerLabelClassName={cx(
@@ -37,7 +38,7 @@ export function FeaturedProjectCard({
       icon={
         <span
           className={cx(
-            'grid h-8 w-8 place-items-center rounded-md ring-1',
+            'grid h-8 w-8 place-items-center rounded-full ring-1',
             isSecure ? 'bg-amber-100/60 ring-amber-200/45' : 'bg-orange-200/35 ring-orange-300/45',
           )}
         >
@@ -45,28 +46,28 @@ export function FeaturedProjectCard({
         </span>
       }
       className={cx(
-        'min-h-0',
+        'h-full min-h-0',
         isSecure ? 'border-[#F2D57A]/55 bg-[#FFF7D9]' : 'border-orange-200/35',
         className,
       )}
     >
-      <div className={cx(variant === 'home' && 'flex min-h-0 flex-1 flex-col')}>
-        <div className="text-base font-semibold tracking-tight text-slate-900">
+      <div className="flex min-h-0 flex-1 flex-col" data-featured-layout={variant}>
+        <div className="shrink-0 text-base font-semibold tracking-tight text-slate-900">
           {f.title}
         </div>
-        <div className="clamp-2 mt-1 text-xs text-slate-700/70">
-          {f.description}
+        {/* shrink-0 + reserved line height so flex-1 above never compresses the description */}
+        <div className="mt-1.5 shrink-0">
+          <p className={cx('clamp-2', PORTFOLIO_BODY_TEXT_CLASS)}>
+            {f.description}
+          </p>
         </div>
 
-        <div
-          className={cx(
-            'flex min-w-0 flex-wrap items-center justify-between gap-x-3 gap-y-1.5',
-            variant === 'home' ? 'mt-auto pt-3' : 'mt-3',
-          )}
-        >
+        <div className="min-h-0 flex-1" aria-hidden />
+
+        <div className="mt-2 flex min-w-0 shrink-0 flex-wrap items-center justify-between gap-x-2 gap-y-1 border-t border-slate-900/6 pt-2 pb-1">
           <div
             className={cx(
-              'flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] font-semibold uppercase tracking-wide',
+              'flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[10px] font-semibold uppercase tracking-wide',
               linkText,
             )}
           >
@@ -76,7 +77,7 @@ export function FeaturedProjectCard({
               rel="noreferrer noopener"
               className="cursor-pointer inline-flex items-center gap-1.5"
             >
-              <Icon name="github" className="h-3.5 w-3.5 shrink-0" pathClassName={linkIconStroke} />
+              <Icon name="github" className="h-3 w-3 shrink-0" pathClassName={linkIconStroke} />
               CODE
             </a>
             <a
@@ -85,8 +86,9 @@ export function FeaturedProjectCard({
               rel="noreferrer noopener"
               className="cursor-pointer inline-flex items-center gap-1.5"
             >
-              <Icon name="external" className="h-3.5 w-3.5 shrink-0" pathClassName={linkIconStroke} />
-              DEMO
+              <Icon name="external" className="h-3 w-3 shrink-0" pathClassName={linkIconStroke} />
+              <span className="sr-only">Visit</span>
+              VISIT
             </a>
           </div>
 
@@ -94,11 +96,13 @@ export function FeaturedProjectCard({
             type="button"
             onClick={onGoProjects}
             className={cx(
-              'cursor-pointer shrink-0 text-left text-[11px] font-bold uppercase tracking-wide',
-              linkText,
+              'cursor-pointer shrink-0 rounded-full px-1.5 py-px text-[7px] font-bold uppercase leading-none tracking-wide ring-1 transition',
+              isSecure
+                ? 'bg-amber-200/55 text-amber-950 ring-amber-400/35 hover:bg-amber-200/80'
+                : 'bg-orange-200/50 text-orange-950 ring-orange-400/35 hover:bg-orange-200/75',
             )}
           >
-            VIEW MORE PROJECTS &gt;
+            {'More\u00a0›'}
           </button>
         </div>
       </div>

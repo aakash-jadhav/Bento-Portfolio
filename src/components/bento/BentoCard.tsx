@@ -25,7 +25,7 @@ export function BentoCard({
    */
   headerVariant?: 'default' | 'split'
   headerLabelClassName?: string
-  padding?: 'md' | 'lg' | 'comfortable'
+  padding?: 'sm' | 'md' | 'lg' | 'comfortable'
 }) {
   const bg =
     tone === 'purple'
@@ -51,20 +51,27 @@ export function BentoCard({
       ? { x: 'px-6', pt: 'pt-5', pb: 'pb-6' }
       : padding === 'lg'
         ? { x: 'px-6', pt: 'pt-6', pb: 'pb-6' }
-        : { x: 'px-5', pt: 'pt-5', pb: 'pb-5' }
+        : padding === 'sm'
+          ? { x: 'px-4', pt: 'pt-3', pb: 'pb-3' }
+          : { x: 'px-5', pt: 'pt-5', pb: 'pb-5' }
 
   const splitHeader = headerVariant === 'split'
   const hasHeader = splitHeader
     ? Boolean(icon || title)
     : Boolean(title || right || icon)
-  const headerPt = splitHeader ? 'pt-2.5' : pad.pt
+  const headerPt = splitHeader ? (padding === 'sm' ? 'pt-2' : 'pt-2.5') : pad.pt
 
   const bodyTop = (() => {
     if (!hasHeader) {
-      return padding === 'comfortable' ? 'pt-5' : padding === 'lg' ? 'pt-6' : 'pt-5'
+      if (padding === 'comfortable') return 'pt-5'
+      if (padding === 'lg') return 'pt-6'
+      if (padding === 'sm') return 'pt-3'
+      return 'pt-5'
     }
     if (splitHeader) {
-      return padding === 'comfortable' ? 'pt-3' : 'pt-4'
+      if (padding === 'comfortable') return 'pt-3'
+      if (padding === 'sm') return 'pt-2'
+      return 'pt-4'
     }
     return 'pt-3'
   })()

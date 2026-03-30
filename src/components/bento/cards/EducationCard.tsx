@@ -1,7 +1,7 @@
 import { usePortfolioForCard } from '../../../contexts/AdminPreviewPortfolioContext'
 import { BentoCard } from '../BentoCard'
 import { Icon } from '../Icon'
-import { cx } from '../utils'
+import { cx, PORTFOLIO_BODY_TEXT_CLASS } from '../utils'
 
 type EducationCardProps = {
   className?: string
@@ -25,8 +25,8 @@ export function EducationCard({ className }: EducationCardProps) {
         <div className="text-base font-semibold tracking-tight text-slate-900">
           {e.degree}
         </div>
-        <div className="mt-1 text-xs text-slate-700/70">{e.school}</div>
-        <div className="mt-auto text-xs italic text-slate-700/55">{e.meta}</div>
+        <div className={cx('mt-1', PORTFOLIO_BODY_TEXT_CLASS)}>{e.school}</div>
+        <div className={cx('mt-auto italic', PORTFOLIO_BODY_TEXT_CLASS)}>{e.meta}</div>
       </div>
     </BentoCard>
   )

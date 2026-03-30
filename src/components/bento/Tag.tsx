@@ -8,7 +8,7 @@ export function Tag({
   children,
 }: {
   tone: TagTone
-  /** Skills card: solid white chips with soft corners */
+  /** Skills card: solid white pill chips */
   appearance?: 'default' | 'skills'
   children: ReactNode
 }) {
@@ -16,7 +16,7 @@ export function Tag({
     return (
       <span
         className={cx(
-          'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium',
+          'inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium',
           'bg-white text-slate-800 ring-1 ring-slate-900/10 shadow-[0_1px_0_rgba(15,23,42,0.04)]',
         )}
       >

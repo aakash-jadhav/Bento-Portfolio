@@ -30,41 +30,41 @@ export function AboutMeCard({ className }: AboutMeCardProps) {
       <div className="text-xl font-bold leading-snug tracking-tight text-[#1F2937]">
         {a.name}
       </div>
-      <div className="mt-1 text-[11px] font-medium leading-snug text-[#4B5563]">
+      <div className="mt-1 text-xs font-medium leading-snug text-slate-950">
         {a.title}
       </div>
 
-      <div className="mt-4 grid gap-2 text-[11px] leading-snug text-[#4B5563]">
-        <div className="grid grid-cols-2 items-center gap-4">
-          <span className="inline-flex min-w-0 items-center gap-2.5">
+      <div className="mt-4 grid gap-2 text-xs leading-snug text-slate-950">
+        <div className="grid grid-cols-2 items-start gap-x-3 gap-y-2">
+          <span className="inline-flex min-w-0 items-start gap-2">
             <Icon
               name="mail"
-              className="h-3.5 w-3.5 shrink-0"
-              pathClassName="stroke-[#4B5563]"
+              className="mt-0.5 h-3 w-3 shrink-0"
+              pathClassName="stroke-slate-800"
             />
-            <span className="truncate">{a.email}</span>
+            <span className="min-w-0 wrap-anywhere">{a.email}</span>
           </span>
-          <span className="inline-flex min-w-0 items-center gap-2.5 justify-self-start">
+          <span className="inline-flex min-w-0 items-center gap-2 justify-self-start">
             <Icon
               name="phone"
-              className="h-3.5 w-3.5 shrink-0"
-              pathClassName="stroke-[#4B5563]"
+              className="h-3 w-3 shrink-0"
+              pathClassName="stroke-slate-800"
             />
             <span className="truncate">{a.phone}</span>
           </span>
         </div>
-        <div className="grid grid-cols-2 items-center gap-4">
-          <span className="inline-flex min-w-0 items-center gap-2.5">
+        <div className="grid grid-cols-2 items-start gap-x-3 gap-y-2">
+          <span className="inline-flex min-w-0 items-start gap-2">
             <Icon
               name="pin"
-              className="h-3.5 w-3.5 shrink-0"
-              pathClassName="stroke-[#4B5563]"
+              className="mt-0.5 h-3 w-3 shrink-0"
+              pathClassName="stroke-slate-800"
             />
-            <span className="truncate">{a.location}</span>
+            <span className="min-w-0 wrap-break-word">{a.location}</span>
           </span>
           <button
             type="button"
-            className="cursor-pointer inline-flex items-center gap-1.5 justify-self-start font-semibold text-[#6366F1] hover:text-[#4F46E5]"
+            className="cursor-pointer inline-flex items-center gap-1.5 justify-self-start text-xs font-semibold text-[#6366F1] hover:text-[#4F46E5]"
             onClick={() => {
               downloadResumePdf().catch(() => {
                 // If no resume exists, do nothing.
@@ -73,7 +73,7 @@ export function AboutMeCard({ className }: AboutMeCardProps) {
           >
             <Icon
               name="download"
-              className="h-3.5 w-3.5 shrink-0"
+              className="h-3 w-3 shrink-0"
               pathClassName="stroke-[#6366F1]"
             />
             Download Resume
