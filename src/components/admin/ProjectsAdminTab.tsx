@@ -1,4 +1,21 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import {
+  closestCenter,
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import type { IconName } from '../bento/Icon'
 import { Select, TagsInput } from '@mantine/core'
 import {
@@ -37,6 +54,55 @@ const ICON_OPTIONS: IconName[] = [
 
 function cloneProjects(p: ProjectEditorEntry[]): ProjectEditorEntry[] {
   return structuredClone(p)
+}
+
+function reorderProjects(
+  items: ProjectEditorEntry[],
+  startIndex: number,
+  endIndex: number,
+): ProjectEditorEntry[] {
+  return arrayMove(items, startIndex, endIndex)
+}
+
+function SortableSidebarItem({
+  id,
+  active,
+  title,
+  tone,
+  onClick,
+}: {
+  id: string
+  active: boolean
+  title: string
+  tone: TagTone
+  onClick: () => void
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
+    useSortable({ id })
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
+  const previewMatchBg = getProjectSidebarActiveBgForTone(tone)
+
+  return (
+    <button
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      type="button"
+      onClick={onClick}
+      className={`flex w-full items-center py-2 pl-3 pr-4 text-left text-sm font-medium transition cursor-grab active:cursor-grabbing ${active
+        ? `${previewMatchBg} rounded-l-none rounded-r-full font-semibold text-slate-900 shadow-sm shadow-slate-900/5`
+        : 'rounded-none text-[#64748b] hover:bg-slate-100/85 hover:rounded-l-none hover:rounded-r-full'
+        } ${isDragging ? 'opacity-85' : ''}`}
+    >
+      <span className="min-w-0 flex-1 truncate">{title}</span>
+    </button>
+  )
 }
 
 function Field({
@@ -105,6 +171,53 @@ export function ProjectsAdminTab() {
     [draft],
   )
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 5 },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  )
+
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event
+      if (!over || active.id === over.id) return
+      const sourceIndex = Number(active.id)
+      const destinationIndex = Number(over.id)
+      if (
+        Number.isNaN(sourceIndex) ||
+        Number.isNaN(destinationIndex) ||
+        sourceIndex === destinationIndex
+      ) {
+        return
+      }
+
+      setDraft((prev) => reorderProjects(prev, sourceIndex, destinationIndex))
+
+      setSelectedIndex((prevSelected) => {
+        if (prevSelected === sourceIndex) return destinationIndex
+
+        // Keep active selection tied to the same project when another row moves around it.
+        if (
+          sourceIndex < prevSelected &&
+          destinationIndex >= prevSelected
+        ) {
+          return prevSelected - 1
+        }
+        if (
+          sourceIndex > prevSelected &&
+          destinationIndex <= prevSelected
+        ) {
+          return prevSelected + 1
+        }
+        return prevSelected
+      })
+    },
+    [setDraft, setSelectedIndex],
+  )
+
   if (!selected) {
     return (
       <p className="p-6 text-sm text-[#94a3b8]">No projects to edit.</p>
@@ -118,25 +231,29 @@ export function ProjectsAdminTab() {
       <div className={`${adminThreeColumnGridClass} min-h-0 flex-1`}>
         <aside className="flex shrink-0 flex-col gap-2 overflow-visible rounded-xl bg-white p-4 shadow-sm shadow-slate-900/5 lg:p-4">
           <h2 className="text-sm font-semibold text-[#0f172a]">Projects</h2>
-          <nav className="flex flex-col items-stretch gap-1.5 overflow-visible pr-0.5">
-            {titleList.map((title, idx) => {
-              const active = idx === safeIndex
-              const previewMatchBg = getProjectSidebarActiveBgForTone(draft[idx].tone)
-              return (
-                <button
-                  key={`${title}-${idx}`}
-                  type="button"
-                  onClick={() => setSelectedIndex(idx)}
-                  className={`flex w-full cursor-pointer items-center py-2 pl-3 pr-4 text-left text-sm font-medium transition ${active
-                      ? `${previewMatchBg} rounded-l-none rounded-r-full font-semibold text-slate-900 shadow-sm shadow-slate-900/5`
-                      : 'rounded-none text-[#64748b] hover:bg-slate-100/85 hover:rounded-l-none hover:rounded-r-full'
-                    }`}
-                >
-                  <span className="min-w-0 flex-1 truncate">{title}</span>
-                </button>
-              )
-            })}
-          </nav>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={draft.map((_, idx) => String(idx))}
+              strategy={verticalListSortingStrategy}
+            >
+              <nav className="flex flex-col items-stretch gap-1.5 overflow-visible pr-0.5">
+                {titleList.map((title, idx) => (
+                  <SortableSidebarItem
+                    key={`${title}-${idx}`}
+                    id={String(idx)}
+                    active={idx === safeIndex}
+                    title={title}
+                    tone={draft[idx].tone}
+                    onClick={() => setSelectedIndex(idx)}
+                  />
+                ))}
+              </nav>
+            </SortableContext>
+          </DndContext>
         </aside>
 
         <section className="flex min-h-[280px] flex-col overflow-hidden rounded-xl bg-white shadow-sm shadow-slate-900/5 lg:min-h-0">
