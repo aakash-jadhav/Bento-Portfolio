@@ -15,13 +15,14 @@ export type ProjectEntry = {
 export const PROJECT_GRID_ITEMS: readonly ProjectEntry[] = [
   {
     tone: 'purple',
-    title: 'Hyper-Comm Platform',
+    title: 'Weekly Time Table',
     description:
-      'Distributed messaging with real-time sync across regions. Kafka and custom WebSockets for low latency.',
-    tags: ['Node.js', 'Express', 'Kafka', 'WebSockets', 'Lambda', 'DynamoDB'],
+      `Built a full-stack weekly timetable app with drag-and-drop scheduling and per-user key access.
+Features optimistic UI updates, task/timeslot management, and persistent cloud storage with Neon Postgres.`,
+    tags: ['React', 'Vite', 'Mantine', 'Express', 'PostgreSQL'],
     icon: 'server',
-    codeUrl: 'https://github.com',
-    demoUrl: 'https://example.com',
+    codeUrl: 'https://github.com/aakash-jadhav/TimeTable_Frontend',
+    demoUrl: 'https://time-table-weekly.netlify.app/',
   },
   {
     tone: 'pink',

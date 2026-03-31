@@ -5,16 +5,16 @@ import type { PortfolioContent, ProjectEditorEntry, SiteContent } from './siteCo
 
 export const DEFAULT_PORTFOLIO: PortfolioContent = {
   about: {
-    name: 'Alex Rivers',
+    name: 'Aakash Jadhav',
     title: 'Full Stack Developer',
-    email: 'hello@arivers.dev',
-    phone: '+1 (555) 123-4567',
-    location: 'San Francisco, CA',
+    email: 'aakash2jadhav@gmail.com',
+    phone: '7769978774',
+    location: 'Kolhapur, India',
   },
   summary: {
-    headline: 'Driven Full Stack Architect',
+    headline: 'Driven Full Stack Developer',
     body:
-      'Passionate about building scalable web applications and leading high-performance engineering teams. I specialize in bridging the gap between complex backend systems and intuitive, modern user experiences.',
+      'Results-driven Full Stack Developer with 3+ years of experience building scalable web apps. Skilled in React, Next.js, Node.js, and modern backend systems. Strong in API design, state management, and AI-driven solutions to improve performance and user engagement.',
   },
   experience: {
     years: '3+ Years',
@@ -22,19 +22,19 @@ export const DEFAULT_PORTFOLIO: PortfolioContent = {
     footer: 'IN-INDUSTRY PROFESSIONAL',
   },
   education: {
-    degree: 'B.S. Computer Science',
-    school: 'Stanford University',
-    meta: 'Class of 2018 • GPA 3.9',
+    degree: 'B.E. Computer Science',
+    school: 'Shivaji University',
+    meta: 'Class of 2019 • 72%',
   },
   skills: {
     groups: [
       {
         title: 'FRONT-END MASTERY',
-        tags: ['React / Next.js 14', 'TypeScript', 'Tailwind', 'Framer Motion', 'Zustand'],
+        tags: ['React', 'TypeScript', 'Tailwind', 'Shadcn/UI', 'Redux', 'Zustand', 'React Query', 'Mantine UI', 'Material UI'],
       },
       {
         title: 'BACK-END & INFRASTRUCTURE',
-        tags: ['Node.js', 'NestJS', 'PostgreSQL', 'Prisma', 'AWS', 'Docker'],
+        tags: ['Node.js', 'NestJS', 'PostgreSQL', 'Prisma', 'SQL','MongoDB'],
       },
       {
         title: 'MOBILE & BROWSER',
@@ -44,19 +44,19 @@ export const DEFAULT_PORTFOLIO: PortfolioContent = {
   },
   featuredEco: {
     headerLabel: 'Featured Project',
-    title: 'Eco-Track Dashboard',
+    title: 'AI Interview Genius',
     description:
-      'SaaS platform tracking carbon footprints. Built with Next.js and D3.js.',
-    codeUrl: 'https://github.com',
-    demoUrl: 'https://example.com',
+      'AI-powered interview preparation platform. Built with React, Node.js, and Tailwind.',
+    codeUrl: 'https://github.com/aakash-jadhav/Interview-genius',
+    demoUrl: 'https://interview-geniuses.netlify.app/',
   },
   featuredSecure: {
-    headerLabel: 'Project 02',
-    title: 'SecurePay API',
+    headerLabel: 'Featured Project',
+    title: 'AI Steps Generator',
     description:
-      'High-throughput payment gateway processing 10k+ req/sec. Node.js & Redis.',
-    codeUrl: 'https://github.com',
-    demoUrl: 'https://example.com',
+      'AI-powered step-by-step guide generator for tasks and projects. Built with React, Node.js.',
+    codeUrl: 'https://github.com/aakash-jadhav/AI-Steps',
+    demoUrl: 'https://stepai.netlify.app/',
   },
 }
 
