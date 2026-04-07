@@ -1,3 +1,5 @@
+import { Badge } from '@mantine/core'
+import type { MantineColor } from '@mantine/core'
 import { BentoCard } from '../BentoCard'
 import { Icon } from '../Icon'
 import type { IconName } from '../Icon'
@@ -219,6 +221,26 @@ export function getProjectSidebarActiveBgForTone(tone: TagTone): string {
   return SIDEBAR_ACTIVE_BG[toneToPaletteKey(tone)]
 }
 
+/** Mantine `Badge` light variant colors aligned with `PALETTES` / `toneToPaletteKey`. */
+function paletteKeyToBadgeColor(key: PaletteKey): MantineColor {
+  const map: Record<PaletteKey, MantineColor> = {
+    red: 'red',
+    orange: 'orange',
+    amber: 'yellow',
+    yellow: 'yellow',
+    lime: 'lime',
+    emerald: 'green',
+    teal: 'teal',
+    cyan: 'cyan',
+    sky: 'blue',
+    indigo: 'indigo',
+    violet: 'violet',
+    purple: 'grape',
+    fuchsia: 'pink',
+  }
+  return map[key]
+}
+
 function projectTypeLabel(tags: readonly string[], icon: IconName): 'web' | 'mobile' | 'chrome' {
   const tagLower = tags.map((t) => t.toLowerCase())
   if (tagLower.includes('chrome')) return 'chrome'
@@ -226,29 +248,34 @@ function projectTypeLabel(tags: readonly string[], icon: IconName): 'web' | 'mob
   return 'web'
 }
 
-function TechChip({
+function ProjectTagBadge({
   value,
-  palette,
+  paletteKey,
   onCopy,
 }: {
   value: string
-  palette: Palette
+  paletteKey: PaletteKey
   onCopy: (value: string) => void
 }) {
   return (
-    <button
+    <Badge
+      variant="light"
+      color={paletteKeyToBadgeColor(paletteKey)}
+      size="xs"
+      radius="xl"
+      component="button"
       type="button"
+      tt="none"
       onClick={() => onCopy(value)}
-      className={cx(
-        'min-w-0 max-w-full cursor-pointer inline-flex items-center justify-center rounded-full px-1 py-px text-[7px] font-medium leading-none ring-1 backdrop-blur-md',
-        palette.techBg,
-        palette.techText,
-        palette.techRing,
-      )}
       aria-label={`Copy ${value}`}
+      className="min-w-0 max-w-full cursor-pointer"
+      classNames={{
+        root: 'max-w-full min-w-0 justify-center',
+        label: 'text-xs font-normal leading-normal normal-case truncate',
+      }}
     >
-      <span className="min-w-0 truncate">{value}</span>
-    </button>
+      {value}
+    </Badge>
   )
 }
 
@@ -324,11 +351,16 @@ export function ProjectGridCard({
 
         {/* Bottom content: tech chips + footer (footer stays at the bottom). */}
         <div className="mt-auto flex min-h-0 flex-col">
-          {/* ~2 lines of compact chips: enough height + gap so rows aren’t clipped */}
-          <div className="max-h-15 min-h-0 w-full overflow-x-hidden overflow-y-auto">
-            <div className="flex w-full flex-wrap gap-x-2.5 gap-y-2">
+          {/* Tags: Mantine Badge light (smaller than description `text-sm`) */}
+          <div className="max-h-28 min-h-0 w-full overflow-x-hidden overflow-y-auto">
+            <div className="flex w-full flex-wrap gap-x-2 gap-y-1.5">
               {tags.map((t, ti) => (
-                <TechChip key={`${t}-${ti}`} value={t} palette={palette} onCopy={onCopy} />
+                <ProjectTagBadge
+                  key={`${t}-${ti}`}
+                  value={t}
+                  paletteKey={paletteKey}
+                  onCopy={onCopy}
+                />
               ))}
             </div>
           </div>

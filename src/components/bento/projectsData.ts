@@ -59,7 +59,7 @@ Features optimistic UI updates, task/timeslot management, and persistent cloud s
     title: 'Network Inspector',
     description:
       'Inspect console logs and network requests in a toolbar popup instead of opening DevTools. Built with vanilla JS: page-world hooks, a service worker, and per-tab storage with export and privacy-minded header redaction.',
-    tags: ['Next.js', 'tRPC', 'PostgreSQL', 'Mapbox', 'BullMQ'],
+    tags: ['Javascript', 'Chrome Extention', 'HTML', 'CSS', 'BullMQ'],
     icon: 'server',
     codeUrl: 'https://github.com/aakash-jadhav/DevPeak',
     demoUrl: 'https://github.com/aakash-jadhav/DevPeak',

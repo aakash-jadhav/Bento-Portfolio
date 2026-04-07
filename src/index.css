@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans:
+    "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
 /* App baseline */
 html,
 body {
@@ -10,6 +16,9 @@ body {
   margin: 0;
   background: #f8f9fb;
   color: #0f172a;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Desktop: lock to non-scrolling 100vh layout. Mobile/tablet can scroll. */
