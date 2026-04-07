@@ -16,9 +16,22 @@ export function AdminPage() {
     <div className="flex min-h-dvh flex-col bg-[#f5f6f8] font-sans text-[#0f172a] lg:h-dvh lg:max-h-dvh lg:overflow-hidden">
       <header className="shrink-0 border-b border-black/6 bg-white">
         <div className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-4 px-4 py-3 sm:px-6">
-          <h1 className="text-[15px] font-bold tracking-tight text-[#0f172a]">
-            Admin Panel
-          </h1>
+          <div className="flex min-w-0 items-center gap-2.5">
+            <img
+              src="/portfolio%20logo.png"
+              alt=""
+              width={36}
+              height={36}
+              className="h-9 w-9 shrink-0"
+              decoding="async"
+            />
+            <div className="min-w-0">
+              <h1 className="text-[15px] font-bold tracking-tight text-[#0f172a]">
+                Aakash Jadhav
+              </h1>
+              <p className="text-xs font-medium text-[#64748b]">Admin</p>
+            </div>
+          </div>
 
           <nav className="flex flex-1 items-center justify-center gap-0 sm:gap-1">
             <button
